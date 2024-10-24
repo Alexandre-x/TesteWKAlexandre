@@ -2,7 +2,8 @@ program TesteWKAlexandre;
 
 uses
   Vcl.Forms,
-  UPedidosVenda in 'View\UPedidosVenda.pas' {FormPedidosVenda};
+  UPedidosVenda in 'View\UPedidosVenda.pas' {FormPedidosVenda},
+  UControllerPedidosVenda in 'Controller\UControllerPedidosVenda.pas';
 
 {$R *.res}
 

@@ -2,7 +2,7 @@ object FormPedidosVenda: TFormPedidosVenda
   Left = 0
   Top = 0
   Caption = 'Pedidos  de Venda'
-  ClientHeight = 368
+  ClientHeight = 445
   ClientWidth = 766
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -13,6 +13,23 @@ object FormPedidosVenda: TFormPedidosVenda
   OldCreateOrder = False
   PixelsPerInch = 96
   TextHeight = 13
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 766
+    Height = 445
+    Align = alClient
+    TabOrder = 0
+    ExplicitHeight = 129
+    object btnConfirmar: TButton
+      Left = 192
+      Top = 72
+      Width = 121
+      Height = 41
+      Caption = 'Confirmar'
+      TabOrder = 0
+    end
+  end
   object FDConnection1: TFDConnection
     Left = 608
     Top = 40
