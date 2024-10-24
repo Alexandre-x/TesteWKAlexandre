@@ -15,11 +15,6 @@ object FormPedidosVenda: TFormPedidosVenda
   TextHeight = 13
   object FDConnection1: TFDConnection
     Left = 608
-    Top = 40
-  end
-  object FDQuery1: TFDQuery
-    Connection = FDConnection1
-    Left = 608
     Top = 120
   end
 end
