@@ -1,0 +1,20 @@
+unit UControllerPedidosVenda;
+
+interface
+
+uses UModelPedidosVenda;
+
+Type
+   TControllerPedidosVenda = class
+   private
+   { private declarations }
+
+   published
+   { published declarations }
+
+   end;
+
+implementation
+
+end.
+

@@ -1,0 +1,83 @@
+unit UModelPedidosVenda;
+
+interface
+
+uses Classes, SysUtils;
+
+Type
+   TPedidosProdutosDTO = class
+   private
+   { private declarations }
+    FID: TIntegerField;
+    Fnumero_pedido: TIntegerField;
+  FieldName = 'numero_pedido'
+end
+object MTPedidosProdutoscodigo_produto: TIntegerField
+  FieldName = 'codigo_produto'
+end
+object MTPedidosProdutosquantidade: TFloatField
+  FieldName = 'quantidade'
+end
+object MTPedidosProdutosvalor_unitario: TCurrencyField
+  FieldName = 'valor_unitario'
+end
+object MTPedidosProdutosvalor_total: TCurrencyField
+  FieldName = 'valor_total'
+end
+object MTPedidosProdutosdescricao_produto: TStringField
+  FieldKind = fkCalculated
+  FieldName = 'descricao_produto'
+  Size = 45
+  Calculated = True
+end
+
+   published
+   { published declarations }
+
+   end;
+   ArrayOfPedidosProdutosDTO = array of TPedidosProdutosDTO;
+
+   TPedidosDTO = class
+   private
+   { private declarations }
+    Fnumero_pedido: Integer;
+    Fdata_emissao: TDateTime;
+    Fcodigo_cliente: Integer;
+    Fvalor_total: Currency;
+    FPedidosProdutos: ArrayOfPedidosProdutosDTO;
+
+   published
+   { published declarations }
+    property numero_pedido:  integer   read Fnumero_pedido  write Fnumero_pedido;
+    property data_emmissao:  TDateTime read Fdata_emissao   write Fdata_emissao;
+    property codigo_cliente: Integer   read Fcodigo_cliente write Fcodigo_cliente;
+    property valor_total:    Currency  read Fvalor_total    write Fvalor_total;
+    property PedidosProdutos: ArrayOfPedidosProdutosDTO read FPedidosProdutos write FPedidosProdutos;
+   end;
+
+   IModelPedidosVenda = interface
+   ['{C96E9F34-C614-47EE-8544-B49D719349A1}']
+     function SalvarPedido(pPedidosDTO: TPedidosDto): Boolean;
+   end;
+
+   TModelPedidosVenda = class(TInterfacedObject, IModelPedidosVenda)
+   private
+       //
+   public
+     class function New:IModelPedidosVenda;
+     function SalvarPedido(pPedidosDTO: TPedidosDto): Boolean;
+   end;
+
+implementation
+
+class function TModelPedidosVenda.New:IModelPedidosVenda;
+begin
+  Result := Self.Create;
+end;
+
+function TModelPedidosVenda.SalvarPedido(pPedidosDTO: TPedidosDto): Boolean;
+begin
+
+end;
+
+end.

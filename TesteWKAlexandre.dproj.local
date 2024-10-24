@@ -2,12 +2,15 @@
 <BorlandProject>
 	<Transactions>
     <Transaction>2024/10/24 04:06:39.000.102,=C:\Users\Meu Notebook\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
-    <Transaction>2024/10/24 04:09:11.000.427,C:\Users\Meu Notebook\Documents\Embarcadero\Studio\Projects\Unit2.pas=C:\TesteWKAlexandre\View\UPedidosVenda.pas</Transaction>
     <Transaction>2024/10/24 04:09:11.000.427,C:\Users\Meu Notebook\Documents\Embarcadero\Studio\Projects\Unit2.dfm=C:\TesteWKAlexandre\View\UPedidosVenda.dfm</Transaction>
+    <Transaction>2024/10/24 04:09:11.000.427,C:\Users\Meu Notebook\Documents\Embarcadero\Studio\Projects\Unit2.pas=C:\TesteWKAlexandre\View\UPedidosVenda.pas</Transaction>
     <Transaction>2024/10/24 04:10:39.000.202,C:\Users\Meu Notebook\Documents\Embarcadero\Studio\Projects\Project2.dproj=C:\TesteWKAlexandre\TesteWKAlexandre.dproj</Transaction>
     <Transaction>2024/10/24 04:40:35.088,=C:\TesteWKAlexandre\Unit1.pas</Transaction>
     <Transaction>2024/10/24 04:42:45.619,C:\TesteWKAlexandre\Controller\UController.PedidosVenda.pas=C:\TesteWKAlexandre\Unit1.pas</Transaction>
     <Transaction>2024/10/24 11:35:05.217,C:\TesteWKAlexandre\Controller\UController.PedidosVenda.pas=</Transaction>
     <Transaction>2024/10/24 11:36:29.844,=C:\TesteWKAlexandre\Controller\UControllerPedidosVenda.pas</Transaction>
+    <Transaction>2024/10/24 12:24:01.756,=C:\TesteWKAlexandre\Unit1.pas</Transaction>
+    <Transaction>2024/10/24 12:24:55.641,C:\TesteWKAlexandre\Model\UModelPedidosVenda.pas=C:\TesteWKAlexandre\Unit1.pas</Transaction>
+    <Transaction>2024/10/24 16:33:24.525,=C:\TesteWKAlexandre\Unit1.pas</Transaction>
   </Transactions>
 </BorlandProject>
