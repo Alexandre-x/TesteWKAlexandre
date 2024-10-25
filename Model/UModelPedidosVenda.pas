@@ -72,8 +72,106 @@ begin
 end;
 
 function TModelPedidosVenda.SalvarPedido(pPedidosDTO: TPedidosDto): Boolean;
+var
+  QAux: TFDQuery;
+  bExistePedido: Boolean;
+  iContProd: Integer;
 begin
-  showmessage('Salvando Pedido...');
+  QAux := TFDQuery.Create(nil);
+  QAux.Close;
+  QAux.Connection := FConexao;
+  QAux.SQL.Clear;
+  QAux.SQL.Add('select numero_pedido from pedidos ');
+  QAux.SQL.Add(' where numero_pedido = ' + floattostr(pPedidosDTO.numero_pedido));
+  QAux.Active := True;
+  if not(QAux.IsEmpty) and
+     (QAux.FieldByName('numero_pedido').AsString <> EmptyStr) then
+  begin
+    bExistePedido := True;
+  end
+  else
+  begin
+    bExistePedido := False;
+  end;
+
+  if not(bExistePedido) then
+  begin
+    //Inserindo Pedido
+    QAux.Close;
+    QAux.Connection := FConexao;
+    QAux.SQL.Clear;
+    QAux.SQL.Add('insert into pedidos( ');
+    QAux.SQL.Add('numero_pedido, ');
+    QAux.SQL.Add('data_emissao, ');
+    QAux.SQL.Add('codigo_cliente, ');
+    QAux.SQL.Add('valor_total) ');
+    QAux.SQL.Add('values(');
+    QAux.SQL.Add(floattostr(pPedidosDTO.numero_pedido) + ', ');
+    QAux.SQL.Add(QuotedStr(formatdatetime('yyyy/mm/dd', pPedidosDTO.data_emmissao)) + ', ');
+    QAux.SQL.Add(floattostr(pPedidosDTO.codigo_cliente) + ', ');
+    QAux.SQL.Add(floattostr(pPedidosDTO.valor_total) + ') ');
+    try
+      FConexao.StartTransaction;
+      QAux.ExecSQL;
+      FConexao.Commit;
+      QAux.Close;
+    except
+      on E: Exception do
+      begin
+        FConexao.Rollback;
+        showmessage(format('Falha ao salvar pedido !%s%s', [#13, E.Message]));
+        Exit;
+      end;
+    end;
+
+    //Inserindo os itens do pedido
+    if (length(pPedidosDTO.PedidosProdutos) > 0) then
+    begin
+      for iContProd := 0 to length(pPedidosDTO.PedidosProdutos) - 1 do
+      begin
+        QAux.Close;
+        QAux.Connection := FConexao;
+        QAux.SQL.Clear;
+        QAux.SQL.Add('insert into pedidos_produtos( ');
+        QAux.SQL.Add('numero_pedido, ');
+        QAux.SQL.Add('codigo_produto, ');
+        QAux.SQL.Add('quantidade, ');
+        QAux.SQL.Add('valor_unitario, ');
+        QAux.SQL.Add('valor_total) ');
+        QAux.SQL.Add('values(');
+        QAux.SQL.Add(floattostr(pPedidosDTO.PedidosProdutos[iContProd].numero_pedido) + ', ');
+        QAux.SQL.Add(floattostr(pPedidosDTO.PedidosProdutos[iContProd].codigo_produto) + ', ');
+        QAux.SQL.Add(floattostr(pPedidosDTO.PedidosProdutos[iContProd].quantidade) + ', ');
+        QAux.SQL.Add(floattostr(pPedidosDTO.PedidosProdutos[iContProd].valor_unitario) + ', ');
+        QAux.SQL.Add(floattostr(pPedidosDTO.PedidosProdutos[iContProd].valor_total) + ') ');
+        try
+          FConexao.StartTransaction;
+          QAux.ExecSQL;
+          FConexao.Commit;
+          QAux.Close;
+        except
+          on E: Exception do
+          begin
+            FConexao.Rollback;
+            showmessage(format('Falha ao salvar itens do pedido !%s%s', [#13, E.Message]));
+            Exit;
+          end;
+        end;
+      end;
+    end;
+  end
+  else
+  begin
+    //Atualizar Pedido
+
+    //Atualizar Itens do Pedido
+  end;
+
+  if Assigned(QAux) then
+  begin
+    QAux.Close;
+    FreeAndNil(QAux);
+  end;
 end;
 
 end.

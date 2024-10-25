@@ -59,7 +59,7 @@ object FormPedidosVenda: TFormPedidosVenda
     Top = 201
     Width = 766
     Height = 144
-    Align = alBottom
+    Align = alClient
     DataSource = dsPedidosProdutos
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
     TabOrder = 1
@@ -72,7 +72,7 @@ object FormPedidosVenda: TFormPedidosVenda
       item
         Expanded = False
         FieldName = 'codigo_produto'
-        Title.Caption = 'C'#243'digo Produto'
+        Title.Caption = 'C'#243'digo do Produto'
         Width = 94
         Visible = True
       end
@@ -80,7 +80,7 @@ object FormPedidosVenda: TFormPedidosVenda
         Expanded = False
         FieldName = 'descricao_produto'
         ReadOnly = True
-        Title.Caption = 'Descri'#231#227'o Produto'
+        Title.Caption = 'Descri'#231#227'o do Produto'
         Width = 288
         Visible = True
       end
@@ -147,6 +147,7 @@ object FormPedidosVenda: TFormPedidosVenda
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
+      OnClick = btnGravarPedidoClick
     end
     object DBEdit1: TDBEdit
       Left = 624
@@ -167,10 +168,32 @@ object FormPedidosVenda: TFormPedidosVenda
     Height = 160
     Align = alTop
     TabOrder = 3
+    ExplicitTop = 47
+    object Label2: TLabel
+      Left = 8
+      Top = 9
+      Width = 84
+      Height = 13
+      Caption = 'C'#243'digo do Cliente'
+    end
+    object Label3: TLabel
+      Left = 8
+      Top = 33
+      Width = 87
+      Height = 13
+      Caption = 'N'#250'mero do Pedido'
+    end
+    object Label4: TLabel
+      Left = 8
+      Top = 58
+      Width = 79
+      Height = 13
+      Caption = 'Data de Emiss'#227'o'
+    end
     object btnConfirmarItem: TButton
-      Left = 4
-      Top = 127
-      Width = 125
+      Left = 641
+      Top = 125
+      Width = 119
       Height = 27
       Caption = 'Confirmar Produto'
       Font.Charset = DEFAULT_CHARSET
@@ -179,7 +202,153 @@ object FormPedidosVenda: TFormPedidosVenda
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
+      TabOrder = 4
+      OnClick = btnConfirmarItemClick
+    end
+    object EdtDataEmissao: TDateTimePicker
+      Left = 115
+      Top = 54
+      Width = 102
+      Height = 21
+      Date = 45590.000000000000000000
+      Time = 0.098030092594854070
+      TabOrder = 2
+      OnKeyPress = EdtCodigoClienteKeyPress
+    end
+    object EdtCodigoCliente: TEdit
+      Left = 115
+      Top = 6
+      Width = 89
+      Height = 21
+      AutoSize = False
+      NumbersOnly = True
       TabOrder = 0
+      OnChange = EdtCodigoClienteChange
+      OnKeyPress = EdtCodigoClienteKeyPress
+    end
+    object EdtNumeroPedido: TEdit
+      Left = 115
+      Top = 30
+      Width = 89
+      Height = 21
+      AutoSize = False
+      NumbersOnly = True
+      TabOrder = 1
+      OnKeyPress = EdtCodigoClienteKeyPress
+    end
+    object GroupBox1: TGroupBox
+      Left = 7
+      Top = 81
+      Width = 628
+      Height = 72
+      Caption = 'Itens do pedido'
+      TabOrder = 3
+      object Label5: TLabel
+        Left = 11
+        Top = 26
+        Width = 89
+        Height = 13
+        Caption = 'C'#243'digo do Produto'
+      end
+      object Label6: TLabel
+        Left = 108
+        Top = 26
+        Width = 102
+        Height = 13
+        Caption = 'Descri'#231#227'o do Produto'
+      end
+      object Label7: TLabel
+        Left = 383
+        Top = 26
+        Width = 56
+        Height = 13
+        Caption = 'Quantidade'
+      end
+      object Label8: TLabel
+        Left = 453
+        Top = 26
+        Width = 56
+        Height = 13
+        Caption = 'Vlr. Unit'#225'rio'
+      end
+      object Label9: TLabel
+        Left = 555
+        Top = 26
+        Width = 43
+        Height = 13
+        Caption = 'Vlr. Total'
+      end
+      object EdtCodigoProduto: TEdit
+        Left = 11
+        Top = 43
+        Width = 91
+        Height = 21
+        AutoSize = False
+        NumbersOnly = True
+        TabOrder = 0
+        OnChange = EdtCodigoProdutoChange
+        OnKeyPress = EdtCodigoClienteKeyPress
+      end
+      object DBLookupComboBox1: TDBLookupComboBox
+        Left = 108
+        Top = 43
+        Width = 261
+        Height = 21
+        KeyField = 'codigo'
+        ListField = 'descricao'
+        ListSource = dsProdutos
+        TabOrder = 1
+        TabStop = False
+        OnCloseUp = DBLookupComboBox1CloseUp
+      end
+      object EdtQuantidade: TEdit
+        Left = 375
+        Top = 43
+        Width = 64
+        Height = 21
+        Alignment = taRightJustify
+        AutoSize = False
+        NumbersOnly = True
+        TabOrder = 2
+        OnChange = EdtValorUnitarioChange
+        OnKeyPress = EdtCodigoClienteKeyPress
+      end
+      object EdtValorUnitario: TEdit
+        Left = 445
+        Top = 43
+        Width = 64
+        Height = 21
+        Alignment = taRightJustify
+        AutoSize = False
+        NumbersOnly = True
+        TabOrder = 3
+        OnChange = EdtValorUnitarioChange
+        OnKeyPress = EdtValorUnitarioKeyPress
+      end
+      object EdtValorTotal: TEdit
+        Left = 514
+        Top = 43
+        Width = 84
+        Height = 21
+        TabStop = False
+        Alignment = taRightJustify
+        AutoSize = False
+        NumbersOnly = True
+        ReadOnly = True
+        TabOrder = 4
+      end
+    end
+    object DBLookupComboBox2: TDBLookupComboBox
+      Left = 209
+      Top = 6
+      Width = 261
+      Height = 21
+      KeyField = 'codigo'
+      ListField = 'nome'
+      ListSource = dsClientes
+      TabOrder = 5
+      TabStop = False
+      OnCloseUp = DBLookupComboBox2CloseUp
     end
   end
   object FDConnection1: TFDConnection
@@ -248,8 +417,8 @@ object FormPedidosVenda: TFormPedidosVenda
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
     StoreDefs = True
-    Left = 598
-    Top = 98
+    Left = 558
+    Top = 226
     object MTPedidosnumero_pedido: TIntegerField
       FieldName = 'numero_pedido'
     end
@@ -270,6 +439,7 @@ object FormPedidosVenda: TFormPedidosVenda
     Top = 69
   end
   object MTPedidosProdutos: TFDMemTable
+    AfterDelete = MTPedidosProdutosAfterDelete
     FieldDefs = <>
     IndexDefs = <>
     FetchOptions.AssignedValues = [evMode]
@@ -280,8 +450,8 @@ object FormPedidosVenda: TFormPedidosVenda
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
     StoreDefs = True
-    Left = 679
-    Top = 98
+    Left = 639
+    Top = 226
     object MTPedidosProdutosID: TIntegerField
       FieldName = 'ID'
     end
@@ -342,19 +512,24 @@ object FormPedidosVenda: TFormPedidosVenda
   object dsPedidos: TDataSource
     AutoEdit = False
     DataSet = MTPedidos
-    Left = 598
-    Top = 146
+    Left = 558
+    Top = 274
   end
   object dsPedidosProdutos: TDataSource
     AutoEdit = False
     DataSet = MTPedidosProdutos
-    Left = 678
-    Top = 146
+    Left = 638
+    Top = 274
   end
   object TimerCheckDB: TTimer
     Enabled = False
     OnTimer = TimerCheckDBTimer
     Left = 696
     Top = 24
+  end
+  object QueryAux: TFDQuery
+    Connection = FDConnection1
+    Left = 392
+    Top = 73
   end
 end

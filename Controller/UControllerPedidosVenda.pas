@@ -11,7 +11,7 @@ uses UModelPedidosVenda,
 
 Type
    IControllerPedidosVenda = interface
-
+   ['{55ACA561-4695-460C-8A8A-39CF314C45E6}']
      function SalvarPedido(pPedidosDTO: TPedidosDto): Boolean;
    end;
 
@@ -28,7 +28,7 @@ Type
 
 implementation
 
-class function TControllerPedidosVenda.New(pConexao: TFDConnection):IModelPedidosVenda;
+class function TControllerPedidosVenda.New(pConexao: TFDConnection):IControllerPedidosVenda;
 begin
   FConexao := pConexao;
   Result := Self.Create;
