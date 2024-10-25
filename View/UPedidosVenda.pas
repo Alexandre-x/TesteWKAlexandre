@@ -203,7 +203,7 @@ begin
 
     if not(MTPedidosProdutos.IsEmpty) then
     begin
-      SetLength(aPedidosProdutos, (MTPedidosProdutos.RecordCount - 1));
+      SetLength(aPedidosProdutos, MTPedidosProdutos.RecordCount);
       MTPedidosProdutos.First;
       iContProd := 0;
       while not(MTPedidosProdutos.Eof) do

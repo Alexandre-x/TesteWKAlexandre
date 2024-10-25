@@ -77,12 +77,6 @@ var
   bExistePedido: Boolean;
   iContProd: Integer;
 begin
-  if Assigned(QAux) then
-  begin
-    QAux.Close;
-    FreeAndNil(QAux);
-  end;
-
   QAux := TFDQuery.Create(nil);
   QAux.Close;
   QAux.Connection := FConexao;
@@ -176,7 +170,8 @@ begin
   if Assigned(QAux) then
   begin
     QAux.Close;
-    FreeAndNil(QAux);
+    QAux.Free;
+    QAux := nil;
   end;
 end;
 
