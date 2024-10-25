@@ -10,14 +10,17 @@ uses UModelPedidosVenda,
      Data.DB, FireDAC.Comp.Client;
 
 Type
-   TControllerPedidosVenda = class
+   IControllerPedidosVenda = interface
+
+     function SalvarPedido(pPedidosDTO: TPedidosDto): Boolean;
+   end;
+
+   TControllerPedidosVenda = class(TInterfacedObject, IControllerPedidosVenda)
    private
-   { private declarations }
 
-   published
-   { published declarations }
-   function SalvarPedido(pConexao: TFDConnection; pPedidosDTO: TPedidosDto): Boolean;
-
+   public
+     class function New(pConexao: TFDConnection):IControllerPedidosVenda;
+     function SalvarPedido(pPedidosDTO: TPedidosDto): Boolean;
    end;
 
    var
@@ -25,9 +28,14 @@ Type
 
 implementation
 
-function TControllerPedidosVenda.SalvarPedido(pConexao: TFDConnection; pPedidosDTO: TPedidosDto): Boolean;
+class function TControllerPedidosVenda.New(pConexao: TFDConnection):IModelPedidosVenda;
 begin
-   FConexao := pConexao;
+  FConexao := pConexao;
+  Result := Self.Create;
+end;
+
+function TControllerPedidosVenda.SalvarPedido(pPedidosDTO: TPedidosDto): Boolean;
+begin
    TModelPedidosVenda.New(FConexao).SalvarPedido(pPedidosDTO);
 end;
 

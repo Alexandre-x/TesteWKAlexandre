@@ -23,7 +23,7 @@ object FormPedidosVenda: TFormPedidosVenda
     Align = alTop
     TabOrder = 0
     ExplicitTop = 160
-    object btnLocalizarPed: TButton
+    object btnLocalizarPedido: TButton
       Left = 4
       Top = 6
       Width = 105
@@ -38,7 +38,7 @@ object FormPedidosVenda: TFormPedidosVenda
       TabOrder = 0
       Visible = False
     end
-    object btnCancelarPed: TButton
+    object btnCancelarPedido: TButton
       Left = 115
       Top = 6
       Width = 105

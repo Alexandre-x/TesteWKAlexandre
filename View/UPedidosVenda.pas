@@ -17,7 +17,7 @@ type
     FDConnection1: TFDConnection;
     QClientes: TFDQuery;
     Panel1: TPanel;
-    btnLocalizarPed: TButton;
+    btnLocalizarPedido: TButton;
     MTPedidos: TFDMemTable;
     DBGridPedProdutos: TDBGrid;
     dsClientes: TDataSource;
@@ -51,7 +51,7 @@ type
     TimerCheckDB: TTimer;
     Panel3: TPanel;
     btnConfirmarItem: TButton;
-    btnCancelarPed: TButton;
+    btnCancelarPedido: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure TimerCheckDBTimer(Sender: TObject);
