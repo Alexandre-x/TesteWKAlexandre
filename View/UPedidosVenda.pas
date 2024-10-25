@@ -10,7 +10,7 @@ uses
   Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS,
   FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet, Vcl.ExtCtrls,
   Vcl.StdCtrls, FireDAC.Phys.MySQL, FireDAC.Phys.MySQLDef, Vcl.Grids,
-  Vcl.DBGrids, Vcl.Mask, Vcl.DBCtrls;
+  Vcl.DBGrids, Vcl.Mask, Vcl.DBCtrls, INIFiles;
 
 type
   TFormPedidosVenda = class(TForm)
@@ -48,10 +48,17 @@ type
     btnGravarPedido: TButton;
     Label1: TLabel;
     DBEdit1: TDBEdit;
+    TimerCheckDB: TTimer;
+    DBGrid1: TDBGrid;
+    DBGrid2: TDBGrid;
+    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure TimerCheckDBTimer(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+    bDbPronto: Boolean;
   end;
 
 var
@@ -63,5 +70,66 @@ implementation
 
 Uses UControllerPedidosVenda, UModelPedidosVenda;
 
+
+procedure TFormPedidosVenda.FormCreate(Sender: TObject);
+var
+  sArqIni: String;
+begin
+  bDbPronto := True;
+  sArqINI := IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName)) + 'TesteWKAlexandre.ini';
+  if not(FileExists(sArqIni)) then
+  begin
+    Application.MessageBox('Arquivo INI para acessar banco de dados, não foi encontrado.', 'Atenção', mb_ok+mb_iconwarning);
+    bDbPronto := False;
+  end
+  else
+  begin
+    FDConnection1.Params.LoadFromFile(sArqINI);
+    try
+      FDConnection1.Connected := True;
+    except
+      on E: Exception do
+      begin
+        Application.MessageBox(pchar(format('Falha ao acessar banco de dados !%s%s', [#13, E.Message])), 'Atenção', mb_ok+mb_iconwarning);
+        bDbPronto := False;
+      end;
+    end;
+  end;
+end;
+
+procedure TFormPedidosVenda.FormShow(Sender: TObject);
+begin
+  if not(FDConnection1.Connected) or not(bDbPronto) then
+  begin
+    Application.MessageBox('Não foi possível conectar-se ao banco de dados !', 'Atenção', mb_ok+mb_iconwarning);
+    bDbPronto := False;
+  end;
+
+  if not(bDbPronto) then
+  begin
+    TimerCheckDB.Enabled := True;
+  end
+  else
+  begin
+     QClientes.Active := True;
+     QProdutos.Active := True;
+
+     MTPedidos.Active := True;
+     MTPedidos.EmptyDataSet;
+     MTPedidosProdutos.Active := True;
+     MTPedidosProdutos.EmptyDataSet;
+  end;
+end;
+
+procedure TFormPedidosVenda.TimerCheckDBTimer(Sender: TObject);
+begin
+  if not(bDbPronto) then
+  begin
+    FormPedidosVenda.Close;
+    Application.Terminate;
+  end;
+
+  TimerCheckDB.Enabled := False;
+end;
 
 end.

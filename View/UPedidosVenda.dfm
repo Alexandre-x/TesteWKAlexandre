@@ -11,6 +11,8 @@ object FormPedidosVenda: TFormPedidosVenda
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -34,6 +36,32 @@ object FormPedidosVenda: TFormPedidosVenda
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
+    end
+    object DBGrid1: TDBGrid
+      Left = 16
+      Top = 16
+      Width = 320
+      Height = 120
+      DataSource = dsClientes
+      TabOrder = 1
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Style = []
+    end
+    object DBGrid2: TDBGrid
+      Left = 346
+      Top = 48
+      Width = 320
+      Height = 120
+      DataSource = dsProdutos
+      TabOrder = 2
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Style = []
     end
   end
   object DBGridPedProdutos: TDBGrid
@@ -104,7 +132,7 @@ object FormPedidosVenda: TFormPedidosVenda
     ExplicitWidth = 185
     object Label1: TLabel
       Left = 496
-      Top = 10
+      Top = 12
       Width = 122
       Height = 13
       Caption = 'Valor Total do Pedido:'
@@ -117,7 +145,7 @@ object FormPedidosVenda: TFormPedidosVenda
       ParentFont = False
     end
     object btnGravarPedido: TButton
-      Left = 350
+      Left = 4
       Top = 6
       Width = 105
       Height = 27
@@ -132,7 +160,7 @@ object FormPedidosVenda: TFormPedidosVenda
     end
     object DBEdit1: TDBEdit
       Left = 624
-      Top = 7
+      Top = 9
       Width = 134
       Height = 21
       TabStop = False
@@ -144,12 +172,9 @@ object FormPedidosVenda: TFormPedidosVenda
   end
   object FDConnection1: TFDConnection
     Params.Strings = (
-      'Database=dbwktech'
-      'User_Name=root'
-      'Password=Wk#102423#1a'
-      'Server=localhost'
+      'Server='
       'DriverID=MySQL')
-    Connected = True
+    LoginPrompt = False
     Left = 608
     Top = 40
   end
@@ -271,7 +296,6 @@ object FormPedidosVenda: TFormPedidosVenda
     end
   end
   object QProdutos: TFDQuery
-    Active = True
     Connection = FDConnection1
     SQL.Strings = (
       'select * from produtos'
@@ -314,5 +338,11 @@ object FormPedidosVenda: TFormPedidosVenda
     DataSet = MTPedidosProdutos
     Left = 678
     Top = 146
+  end
+  object TimerCheckDB: TTimer
+    Enabled = False
+    OnTimer = TimerCheckDBTimer
+    Left = 696
+    Top = 24
   end
 end
