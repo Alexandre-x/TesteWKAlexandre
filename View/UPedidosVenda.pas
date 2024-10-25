@@ -386,21 +386,26 @@ end;
 
 procedure TFormPedidosVenda.MTPedidosProdutosCalcFields(DataSet: TDataSet);
 begin
-  QueryAux.Close;
-  QueryAux.SQL.Clear;
-  QueryAux.SQL.Add('select descricao from produtos');
-  QueryAux.SQL.Add(' where cod_produto = ' + MTPedidosProdutoscodigo_produto.AsString);
-  QueryAux.Open;
-  if (QueryAux.IsEmpty) or
-      (QueryAux.FieldByName('descricao').IsNull) then
+  MTPedidosProdutosdescricao_produto.AsString := EmptyStr;
+
+  if not(MTPedidosProdutoscodigo_produto.IsNull) then
   begin
-    MTPedidosProdutosdescricao_produto.AsString := EmptyStr;
-  end
-  else
-  begin
-    MTPedidosProdutosdescricao_produto.AsString := QueryAux.FieldByName('descricao').AsString;
+    QueryAux.Close;
+    QueryAux.SQL.Clear;
+    QueryAux.SQL.Add('select descricao from dbwktech.produtos');
+    QueryAux.SQL.Add(' where codigo = ' + MTPedidosProdutoscodigo_produto.AsString);
+    QueryAux.Open;
+    if (QueryAux.IsEmpty) or
+        (QueryAux.FieldByName('descricao').IsNull) then
+    begin
+      MTPedidosProdutosdescricao_produto.AsString := EmptyStr;
+    end
+    else
+    begin
+      MTPedidosProdutosdescricao_produto.AsString := QueryAux.FieldByName('descricao').AsString;
+    end;
+    QueryAux.Close;
   end;
-  QueryAux.Close;
 end;
 
 procedure TFormPedidosVenda.TimerCheckDBTimer(Sender: TObject);
