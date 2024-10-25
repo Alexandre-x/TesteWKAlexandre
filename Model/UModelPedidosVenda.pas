@@ -74,7 +74,7 @@ end;
 function TModelPedidosVenda.SalvarPedido(pPedidosDTO: TPedidosDto): Boolean;
 var
   QAux: TFDQuery;
-  bExistePedido: Boolean;
+  bExistePedido, bExisteItemPedido: Boolean;
   iContProd: Integer;
 begin
   QAux := TFDQuery.Create(nil);

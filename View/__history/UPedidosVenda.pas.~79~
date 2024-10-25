@@ -84,9 +84,14 @@ type
     procedure DBLookupComboBox2CloseUp(Sender: TObject);
     procedure EdtCodigoClienteChange(Sender: TObject);
     procedure btnGravarPedidoClick(Sender: TObject);
+    procedure MTPedidosProdutosCalcFields(DataSet: TDataSet);
+    procedure DBGridPedProdutosKeyPress(Sender: TObject; var Key: Char);
+    procedure DBGridPedProdutosKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     procedure LimparCamposPedido();
+    procedure LimparCamposProdutoPedido();
     function  CalcularValorTotal(): Real;
     procedure SalvarPedido();
   public
@@ -137,7 +142,11 @@ begin
     MTPedidos.Post;
   end;
 
-  MTPedidosProdutos.Insert;
+  if not(MTPedidosProdutos.State in dseditmodes) then
+  begin
+    MTPedidosProdutos.Insert;
+  end;
+
   MTPedidosProdutosnumero_pedido.AsInteger := MTPedidosnumero_pedido.AsInteger;
   MTPedidosProdutoscodigo_produto.AsString := EdtCodigoProduto.Text;
   MTPedidosProdutosquantidade.AsFloat      := strtofloatdef(AnsiReplaceText(EdtQuantidade.Text, ',', '.'), 1);
@@ -148,6 +157,8 @@ begin
   MTPedidos.Edit;
   MTPedidosvalor_total.AsFloat := CalcularValorTotal();
   MTPedidos.Post;
+
+  LimparCamposProdutoPedido();
 end;
 
 function TFormPedidosVenda.CalcularValorTotal(): Real;
@@ -188,40 +199,52 @@ var
   aPedidosProdutos: ArrayOfPedidosProdutosDTO;
   iContProd: Integer;
 begin
-  oPedidosDTO         := TPedidosDTO.Create;
-  oPedidosProdutosDTO := TPedidosProdutosDTO.Create;
+  try
+    oPedidosDTO         := TPedidosDTO.Create;
+    oPedidosProdutosDTO := TPedidosProdutosDTO.Create;
 
-  oPedidosDTO.numero_pedido  := MTPedidosnumero_pedido.Value;
-  oPedidosDTO.data_emmissao  := MTPedidosdata_emissao.Value;
-  oPedidosDTO.codigo_cliente := MTPedidoscodigo_cliente.Value;
-  oPedidosDTO.valor_total    := MTPedidosvalor_total.Value;
+    oPedidosDTO.numero_pedido  := MTPedidosnumero_pedido.Value;
+    oPedidosDTO.data_emmissao  := MTPedidosdata_emissao.Value;
+    oPedidosDTO.codigo_cliente := MTPedidoscodigo_cliente.Value;
+    oPedidosDTO.valor_total    := MTPedidosvalor_total.Value;
 
-  if not(MTPedidosProdutos.IsEmpty) then
-  begin
-    SetLength(aPedidosProdutos, (MTPedidosProdutos.RecordCount - 1));
-    MTPedidosProdutos.First;
-    iContProd := 0;
-    while not(MTPedidosProdutos.Eof) do
+    if not(MTPedidosProdutos.IsEmpty) then
     begin
-      aPedidosProdutos[iContProd] := TPedidosProdutosDTO.Create;
-      aPedidosProdutos[iContProd].numero_pedido  := MTPedidosProdutosnumero_pedido.Value;
-      aPedidosProdutos[iContProd].codigo_produto := MTPedidosProdutoscodigo_produto.Value;
-      aPedidosProdutos[iContProd].quantidade     := MTPedidosProdutosquantidade.Value;
-      aPedidosProdutos[iContProd].valor_unitario := MTPedidosProdutosvalor_unitario.Value;
-      aPedidosProdutos[iContProd].valor_total    := MTPedidosProdutosvalor_total.Value;
+      SetLength(aPedidosProdutos, MTPedidosProdutos.RecordCount);
+      MTPedidosProdutos.First;
+      iContProd := 0;
+      while not(MTPedidosProdutos.Eof) do
+      begin
+        aPedidosProdutos[iContProd] := TPedidosProdutosDTO.Create;
+        aPedidosProdutos[iContProd].numero_pedido  := MTPedidosProdutosnumero_pedido.Value;
+        aPedidosProdutos[iContProd].codigo_produto := MTPedidosProdutoscodigo_produto.Value;
+        aPedidosProdutos[iContProd].quantidade     := MTPedidosProdutosquantidade.Value;
+        aPedidosProdutos[iContProd].valor_unitario := MTPedidosProdutosvalor_unitario.Value;
+        aPedidosProdutos[iContProd].valor_total    := MTPedidosProdutosvalor_total.Value;
 
-      inc(iContProd);
-      MTPedidosProdutos.Next;
+        inc(iContProd);
+        MTPedidosProdutos.Next;
+      end;
+    end;
+
+    if (length(aPedidosProdutos) > 0) then
+    begin
+      oPedidosDTO.PedidosProdutos := aPedidosProdutos;
+    end;
+
+    //Acionando Controller para Persistir informações no banco de dados.
+    TControllerPedidosVenda.New(FDConnection1).SalvarPedido(oPedidosDTO);
+  finally
+    if Assigned(oPedidosProdutosDTO) then
+    begin
+      freeandnil(oPedidosProdutosDTO);
+    end;
+
+    if Assigned(oPedidosDTO) then
+    begin
+      freeandnil(oPedidosDTO);
     end;
   end;
-
-  if (length(aPedidosProdutos) > 0) then
-  begin
-    oPedidosDTO.PedidosProdutos := aPedidosProdutos;
-  end;
-
-  //Acionando Controller para Persistir informações no banco de dados.
-  TControllerPedidosVenda.New(FDConnection1).SalvarPedido(oPedidosDTO);
 end;
 
 procedure TFormPedidosVenda.LimparCamposPedido();
@@ -238,6 +261,52 @@ begin
 
   MTPedidosProdutos.EmptyDataSet;
   MTPedidos.EmptyDataSet;
+end;
+
+procedure TFormPedidosVenda.LimparCamposProdutoPedido();
+begin
+  EdtCodigoProduto.Text := EmptyStr;
+  dbLookupComboBox1.KeyValue := -1;
+  EdtQuantidade.Text         := EmptyStr;
+  EdtValorUnitario.Text      := EmptyStr;
+  EdtValorTotal.Text         := EmptyStr;
+end;
+
+procedure TFormPedidosVenda.DBGridPedProdutosKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if (key = 46) then //Delete
+  begin
+    if application.MessageBox('Deseja excluir este item do pedido ?', 'Excluir', mb_yesno+mb_iconquestion) = mryes then
+    begin
+      FDConnection1.StartTransaction;
+      QueryAux.Close;
+      QueryAux.SQL.Clear;
+      QueryAux.SQL.Add('delete from pedidos_produtos');
+      QueryAux.SQL.Add(' where ID = ');
+      QueryAux.SQL.Add(MTPedidosProdutosID.AsString);
+      QueryAux.Active := True;
+      QueryAux.Close;
+
+      MTPedidosProdutos.Delete;
+      FDConnection1.Commit;
+    end;
+  end;
+end;
+
+procedure TFormPedidosVenda.DBGridPedProdutosKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  if (key = #13) then
+  begin
+    key := #0;
+    EdtCodigoProduto.Text      := MTPedidosProdutoscodigo_produto.AsString;
+    dbLookupComboBox1.KeyValue := MTPedidosProdutoscodigo_produto.Value;
+    EdtQuantidade.Text         := MTPedidosProdutosquantidade.AsString;
+    EdtValorUnitario.Text      := MTPedidosProdutosvalor_unitario.AsString;
+    EdtValorTotal.Text         := MTPedidosProdutosvalor_total.AsString;
+    MTPedidosProdutos.Edit;
+  end;
 end;
 
 procedure TFormPedidosVenda.DBLookupComboBox1CloseUp(Sender: TObject);
@@ -357,6 +426,30 @@ begin
   MTPedidos.Edit;
   MTPedidosvalor_total.AsFloat := CalcularValorTotal();
   MTPedidos.Post;
+end;
+
+procedure TFormPedidosVenda.MTPedidosProdutosCalcFields(DataSet: TDataSet);
+begin
+  MTPedidosProdutosdescricao_produto.AsString := EmptyStr;
+
+  if not(MTPedidosProdutoscodigo_produto.IsNull) then
+  begin
+    QueryAux.Close;
+    QueryAux.SQL.Clear;
+    QueryAux.SQL.Add('select descricao from dbwktech.produtos');
+    QueryAux.SQL.Add(' where codigo = ' + MTPedidosProdutoscodigo_produto.AsString);
+    QueryAux.Open;
+    if (QueryAux.IsEmpty) or
+        (QueryAux.FieldByName('descricao').IsNull) then
+    begin
+      MTPedidosProdutosdescricao_produto.AsString := EmptyStr;
+    end
+    else
+    begin
+      MTPedidosProdutosdescricao_produto.AsString := QueryAux.FieldByName('descricao').AsString;
+    end;
+    QueryAux.Close;
+  end;
 end;
 
 procedure TFormPedidosVenda.TimerCheckDBTimer(Sender: TObject);

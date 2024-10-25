@@ -84,6 +84,8 @@ type
     procedure DBLookupComboBox2CloseUp(Sender: TObject);
     procedure EdtCodigoClienteChange(Sender: TObject);
     procedure btnGravarPedidoClick(Sender: TObject);
+    procedure MTPedidosProdutosCalcFields(DataSet: TDataSet);
+    procedure DBGridPedProdutosKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
     procedure LimparCamposPedido();
@@ -202,7 +204,7 @@ begin
 
     if not(MTPedidosProdutos.IsEmpty) then
     begin
-      SetLength(aPedidosProdutos, (MTPedidosProdutos.RecordCount - 1));
+      SetLength(aPedidosProdutos, MTPedidosProdutos.RecordCount);
       MTPedidosProdutos.First;
       iContProd := 0;
       while not(MTPedidosProdutos.Eof) do
@@ -262,6 +264,20 @@ begin
   EdtQuantidade.Text         := EmptyStr;
   EdtValorUnitario.Text      := EmptyStr;
   EdtValorTotal.Text         := EmptyStr;
+end;
+
+procedure TFormPedidosVenda.DBGridPedProdutosKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  if key = #13 then
+  begin
+    key := #0;
+    EdtCodigoProduto.Text      := MTPedidosProdutoscodigo_produto.AsString;
+    dbLookupComboBox1.KeyValue := MTPedidosProdutoscodigo_produto.Value;
+    EdtQuantidade.Text         := MTPedidosProdutosquantidade.AsString;
+    EdtValorUnitario.Text      := MTPedidosProdutosvalor_unitario.AsString;
+    EdtValorTotal.Text         := MTPedidosProdutosvalor_total.AsString;
+  end;
 end;
 
 procedure TFormPedidosVenda.DBLookupComboBox1CloseUp(Sender: TObject);
@@ -381,6 +397,30 @@ begin
   MTPedidos.Edit;
   MTPedidosvalor_total.AsFloat := CalcularValorTotal();
   MTPedidos.Post;
+end;
+
+procedure TFormPedidosVenda.MTPedidosProdutosCalcFields(DataSet: TDataSet);
+begin
+  MTPedidosProdutosdescricao_produto.AsString := EmptyStr;
+
+  if not(MTPedidosProdutoscodigo_produto.IsNull) then
+  begin
+    QueryAux.Close;
+    QueryAux.SQL.Clear;
+    QueryAux.SQL.Add('select descricao from dbwktech.produtos');
+    QueryAux.SQL.Add(' where codigo = ' + MTPedidosProdutoscodigo_produto.AsString);
+    QueryAux.Open;
+    if (QueryAux.IsEmpty) or
+        (QueryAux.FieldByName('descricao').IsNull) then
+    begin
+      MTPedidosProdutosdescricao_produto.AsString := EmptyStr;
+    end
+    else
+    begin
+      MTPedidosProdutosdescricao_produto.AsString := QueryAux.FieldByName('descricao').AsString;
+    end;
+    QueryAux.Close;
+  end;
 end;
 
 procedure TFormPedidosVenda.TimerCheckDBTimer(Sender: TObject);

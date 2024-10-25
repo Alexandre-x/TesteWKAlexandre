@@ -11,6 +11,7 @@ object FormPedidosVenda: TFormPedidosVenda
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poScreenCenter
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
@@ -68,6 +69,8 @@ object FormPedidosVenda: TFormPedidosVenda
     TitleFont.Height = -11
     TitleFont.Name = 'Tahoma'
     TitleFont.Style = []
+    OnKeyDown = DBGridPedProdutosKeyDown
+    OnKeyPress = DBGridPedProdutosKeyPress
     Columns = <
       item
         Expanded = False

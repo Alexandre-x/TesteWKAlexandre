@@ -147,6 +147,7 @@ object FormPedidosVenda: TFormPedidosVenda
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
+      OnClick = btnGravarPedidoClick
     end
     object DBEdit1: TDBEdit
       Left = 624
@@ -201,7 +202,8 @@ object FormPedidosVenda: TFormPedidosVenda
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 0
+      TabOrder = 4
+      OnClick = btnConfirmarItemClick
     end
     object EdtDataEmissao: TDateTimePicker
       Left = 115
@@ -210,7 +212,8 @@ object FormPedidosVenda: TFormPedidosVenda
       Height = 21
       Date = 45590.000000000000000000
       Time = 0.098030092594854070
-      TabOrder = 1
+      TabOrder = 2
+      OnKeyPress = EdtCodigoClienteKeyPress
     end
     object EdtCodigoCliente: TEdit
       Left = 115
@@ -219,7 +222,8 @@ object FormPedidosVenda: TFormPedidosVenda
       Height = 21
       AutoSize = False
       NumbersOnly = True
-      TabOrder = 2
+      TabOrder = 0
+      OnChange = EdtCodigoClienteChange
       OnKeyPress = EdtCodigoClienteKeyPress
     end
     object EdtNumeroPedido: TEdit
@@ -229,7 +233,8 @@ object FormPedidosVenda: TFormPedidosVenda
       Height = 21
       AutoSize = False
       NumbersOnly = True
-      TabOrder = 3
+      TabOrder = 1
+      OnKeyPress = EdtCodigoClienteKeyPress
     end
     object GroupBox1: TGroupBox
       Left = 7
@@ -237,7 +242,7 @@ object FormPedidosVenda: TFormPedidosVenda
       Width = 628
       Height = 72
       Caption = 'Itens do pedido'
-      TabOrder = 4
+      TabOrder = 3
       object Label5: TLabel
         Left = 11
         Top = 26
@@ -282,6 +287,7 @@ object FormPedidosVenda: TFormPedidosVenda
         NumbersOnly = True
         TabOrder = 0
         OnChange = EdtCodigoProdutoChange
+        OnKeyPress = EdtCodigoClienteKeyPress
       end
       object DBLookupComboBox1: TDBLookupComboBox
         Left = 108
@@ -304,6 +310,8 @@ object FormPedidosVenda: TFormPedidosVenda
         AutoSize = False
         NumbersOnly = True
         TabOrder = 2
+        OnChange = EdtValorUnitarioChange
+        OnKeyPress = EdtCodigoClienteKeyPress
       end
       object EdtValorUnitario: TEdit
         Left = 445
@@ -314,6 +322,8 @@ object FormPedidosVenda: TFormPedidosVenda
         AutoSize = False
         NumbersOnly = True
         TabOrder = 3
+        OnChange = EdtValorUnitarioChange
+        OnKeyPress = EdtValorUnitarioKeyPress
       end
       object EdtValorTotal: TEdit
         Left = 514
@@ -327,6 +337,18 @@ object FormPedidosVenda: TFormPedidosVenda
         ReadOnly = True
         TabOrder = 4
       end
+    end
+    object DBLookupComboBox2: TDBLookupComboBox
+      Left = 209
+      Top = 6
+      Width = 261
+      Height = 21
+      KeyField = 'codigo'
+      ListField = 'nome'
+      ListSource = dsClientes
+      TabOrder = 5
+      TabStop = False
+      OnCloseUp = DBLookupComboBox2CloseUp
     end
   end
   object FDConnection1: TFDConnection
@@ -417,6 +439,8 @@ object FormPedidosVenda: TFormPedidosVenda
     Top = 69
   end
   object MTPedidosProdutos: TFDMemTable
+    AfterDelete = MTPedidosProdutosAfterDelete
+    OnCalcFields = MTPedidosProdutosCalcFields
     FieldDefs = <>
     IndexDefs = <>
     FetchOptions.AssignedValues = [evMode]
