@@ -87,6 +87,7 @@ type
   private
     { Private declarations }
     procedure LimparCamposPedido();
+    procedure LimparCamposProdutoPedido();
     function  CalcularValorTotal(): Real;
     procedure SalvarPedido();
   public
@@ -148,6 +149,8 @@ begin
   MTPedidos.Edit;
   MTPedidosvalor_total.AsFloat := CalcularValorTotal();
   MTPedidos.Post;
+
+  LimparCamposProdutoPedido();
 end;
 
 function TFormPedidosVenda.CalcularValorTotal(): Real;
@@ -235,6 +238,7 @@ begin
     end;
   end;
 end;
+
 procedure TFormPedidosVenda.LimparCamposPedido();
 begin
   EdtCodigoCliente.Text      := EmptyStr;
@@ -249,6 +253,15 @@ begin
 
   MTPedidosProdutos.EmptyDataSet;
   MTPedidos.EmptyDataSet;
+end;
+
+procedure TFormPedidosVenda.LimparCamposProdutoPedido();
+begin
+  EdtCodigoProduto.Text := EmptyStr;
+  dbLookupComboBox1.KeyValue := -1;
+  EdtQuantidade.Text         := EmptyStr;
+  EdtValorUnitario.Text      := EmptyStr;
+  EdtValorTotal.Text         := EmptyStr;
 end;
 
 procedure TFormPedidosVenda.DBLookupComboBox1CloseUp(Sender: TObject);
