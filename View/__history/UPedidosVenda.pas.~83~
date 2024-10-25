@@ -88,12 +88,14 @@ type
     procedure DBGridPedProdutosKeyPress(Sender: TObject; var Key: Char);
     procedure DBGridPedProdutosKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure btnLocalizarPedidoClick(Sender: TObject);
   private
     { Private declarations }
     procedure LimparCamposPedido();
     procedure LimparCamposProdutoPedido();
     function  CalcularValorTotal(): Real;
     procedure SalvarPedido();
+    procedure CarregarDadosPedido(pnumero_pedido: Integer);
   public
     { Public declarations }
     bDbPronto: Boolean;
@@ -192,6 +194,32 @@ begin
   LimparCamposPedido();
 end;
 
+procedure TFormPedidosVenda.btnLocalizarPedidoClick(Sender: TObject);
+var
+  iNumeroPedido: Integer;
+begin
+  iNumeroPedido := strtointdef(inputbox('Número do pedido', 'Informe o número do pedido', ''), -1);
+  CarregarDadosPedido(iNumeroPedido);
+end;
+
+procedure TFormPedidosVenda.CarregarDadosPedido(pnumero_pedido: Integer);
+begin
+  QueryAux.Close;
+  QueryAux.SQL.Clear;
+  QueryAux.SQL.Add('select * from dbwktech.pedidos');
+  QueryAux.SQL.Add(' where numero_pedido = ' + floattostr(pnumero_pedido));
+  QueryAux.Open;
+  if (QueryAux.IsEmpty) then
+  begin
+
+  end
+  else
+  begin
+    //MTPedidosProdutosdescricao_produto.AsString := QueryAux.FieldByName('descricao').AsString;
+  end;
+  QueryAux.Close;
+end;
+
 procedure TFormPedidosVenda.SalvarPedido();
 var
   oPedidosDTO: TPedidosDTO;
@@ -275,9 +303,28 @@ end;
 procedure TFormPedidosVenda.DBGridPedProdutosKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
-  if (key = 13) then
+  if (key = 46) then //Delete
   begin
-    //key := #0;
+    if (MTPedidosProdutosID.Isnull) then
+    begin
+      application.MessageBox('Grave o pedido primeiro !', 'Aviso', mb_ok+mb_iconinformation);
+      Exit;
+    end;
+
+    if application.MessageBox('Deseja excluir este item do pedido ?', 'Excluir', mb_yesno+mb_iconquestion) = mryes then
+    begin
+      FDConnection1.StartTransaction;
+      QueryAux.Close;
+      QueryAux.SQL.Clear;
+      QueryAux.SQL.Add('delete from pedidos_produtos');
+      QueryAux.SQL.Add(' where ID = ');
+      QueryAux.SQL.Add(MTPedidosProdutosID.AsString);
+      QueryAux.Active := True;
+      QueryAux.Close;
+
+      MTPedidosProdutos.Delete;
+      FDConnection1.Commit;
+    end;
   end;
 end;
 

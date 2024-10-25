@@ -85,6 +85,9 @@ type
     procedure EdtCodigoClienteChange(Sender: TObject);
     procedure btnGravarPedidoClick(Sender: TObject);
     procedure MTPedidosProdutosCalcFields(DataSet: TDataSet);
+    procedure DBGridPedProdutosKeyPress(Sender: TObject; var Key: Char);
+    procedure DBGridPedProdutosKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     procedure LimparCamposPedido();
@@ -139,7 +142,11 @@ begin
     MTPedidos.Post;
   end;
 
-  MTPedidosProdutos.Insert;
+  if not(MTPedidosProdutos.State in dseditmodes) then
+  begin
+    MTPedidosProdutos.Insert;
+  end;
+
   MTPedidosProdutosnumero_pedido.AsInteger := MTPedidosnumero_pedido.AsInteger;
   MTPedidosProdutoscodigo_produto.AsString := EdtCodigoProduto.Text;
   MTPedidosProdutosquantidade.AsFloat      := strtofloatdef(AnsiReplaceText(EdtQuantidade.Text, ',', '.'), 1);
@@ -203,7 +210,7 @@ begin
 
     if not(MTPedidosProdutos.IsEmpty) then
     begin
-      SetLength(aPedidosProdutos, (MTPedidosProdutos.RecordCount - 1));
+      SetLength(aPedidosProdutos, MTPedidosProdutos.RecordCount);
       MTPedidosProdutos.First;
       iContProd := 0;
       while not(MTPedidosProdutos.Eof) do
@@ -263,6 +270,49 @@ begin
   EdtQuantidade.Text         := EmptyStr;
   EdtValorUnitario.Text      := EmptyStr;
   EdtValorTotal.Text         := EmptyStr;
+end;
+
+procedure TFormPedidosVenda.DBGridPedProdutosKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if (key = 46) then //Delete
+  begin
+    if (MTPedidosProdutosID.Isnull) then
+    begin
+      application.MessageBox('Grave o pedido primeiro !', 'Aviso', mb_ok+mb_iconinformation);
+      Exit;
+    end;
+
+    if application.MessageBox('Deseja excluir este item do pedido ?', 'Excluir', mb_yesno+mb_iconquestion) = mryes then
+    begin
+      FDConnection1.StartTransaction;
+      QueryAux.Close;
+      QueryAux.SQL.Clear;
+      QueryAux.SQL.Add('delete from pedidos_produtos');
+      QueryAux.SQL.Add(' where ID = ');
+      QueryAux.SQL.Add(MTPedidosProdutosID.AsString);
+      QueryAux.Active := True;
+      QueryAux.Close;
+
+      MTPedidosProdutos.Delete;
+      FDConnection1.Commit;
+    end;
+  end;
+end;
+
+procedure TFormPedidosVenda.DBGridPedProdutosKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  if (key = #13) then
+  begin
+    key := #0;
+    EdtCodigoProduto.Text      := MTPedidosProdutoscodigo_produto.AsString;
+    dbLookupComboBox1.KeyValue := MTPedidosProdutoscodigo_produto.Value;
+    EdtQuantidade.Text         := MTPedidosProdutosquantidade.AsString;
+    EdtValorUnitario.Text      := MTPedidosProdutosvalor_unitario.AsString;
+    EdtValorTotal.Text         := MTPedidosProdutosvalor_total.AsString;
+    MTPedidosProdutos.Edit;
+  end;
 end;
 
 procedure TFormPedidosVenda.DBLookupComboBox1CloseUp(Sender: TObject);

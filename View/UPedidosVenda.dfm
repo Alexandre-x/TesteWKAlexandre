@@ -37,7 +37,7 @@ object FormPedidosVenda: TFormPedidosVenda
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
-      Visible = False
+      OnClick = btnLocalizarPedidoClick
     end
     object btnCancelarPedido: TButton
       Left = 115
@@ -52,7 +52,6 @@ object FormPedidosVenda: TFormPedidosVenda
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
-      Visible = False
     end
   end
   object DBGridPedProdutos: TDBGrid

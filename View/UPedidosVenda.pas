@@ -88,12 +88,14 @@ type
     procedure DBGridPedProdutosKeyPress(Sender: TObject; var Key: Char);
     procedure DBGridPedProdutosKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure btnLocalizarPedidoClick(Sender: TObject);
   private
     { Private declarations }
     procedure LimparCamposPedido();
     procedure LimparCamposProdutoPedido();
     function  CalcularValorTotal(): Real;
     procedure SalvarPedido();
+    function  CarregarDadosPedido(pnumero_pedido: Integer): boolean;
   public
     { Public declarations }
     bDbPronto: Boolean;
@@ -190,6 +192,48 @@ begin
   SalvarPedido();
 
   LimparCamposPedido();
+end;
+
+procedure TFormPedidosVenda.btnLocalizarPedidoClick(Sender: TObject);
+var
+  iNumeroPedido: Integer;
+begin
+  iNumeroPedido := strtointdef(inputbox('Número do pedido', 'Informe o número do pedido', ''), -1);
+  if not(CarregarDadosPedido(iNumeroPedido)) then
+  begin
+    application.messagebox('Pedido não encontrado !', 'Atenção', mb_ok+mb_iconinformation);
+    Exit;
+  end;
+end;
+
+function TFormPedidosVenda.CarregarDadosPedido(pnumero_pedido: Integer): boolean;
+begin
+  QueryAux.Close;
+  QueryAux.SQL.Clear;
+  QueryAux.SQL.Add('select * from dbwktech.pedidos');
+  QueryAux.SQL.Add(' where numero_pedido = ' + floattostr(pnumero_pedido));
+  QueryAux.Open;
+  if (QueryAux.IsEmpty) then
+  begin
+    Result := False;
+  end
+  else
+  begin
+    Result := True;
+    MTPedidos.EmptyDataSet;
+    MTPedidos.Insert;
+    MTPedidosnumero_pedido.Value  := QueryAux.fieldbyname('numero_pedido').Value;
+    MTPedidosdata_emissao.Value   := QueryAux.fieldbyname('data_emissao').Value;
+    MTPedidoscodigo_cliente.Value := QueryAux.fieldbyname('codigo_cliente').Value;
+    MTPedidosvalor_total.Value    := QueryAux.fieldbyname('valor_total').Value;
+    MTPedidos.Post;
+
+    EdtCodigoCliente.Text      := MTPedidoscodigo_cliente.asstring;
+    edtNumeroPedido.Text       := MTPedidosnumero_pedido.AsString;
+    edtDataEmissao.DateTime    := MTPedidosdata_emissao.AsDateTime;
+    dblookupcombobox2.KeyValue := MTPedidoscodigo_cliente.AsInteger;
+  end;
+  QueryAux.Close;
 end;
 
 procedure TFormPedidosVenda.SalvarPedido();

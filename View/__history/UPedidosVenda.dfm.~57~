@@ -11,6 +11,7 @@ object FormPedidosVenda: TFormPedidosVenda
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poScreenCenter
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
@@ -37,6 +38,7 @@ object FormPedidosVenda: TFormPedidosVenda
       ParentFont = False
       TabOrder = 0
       Visible = False
+      OnClick = btnLocalizarPedidoClick
     end
     object btnCancelarPedido: TButton
       Left = 115
@@ -68,6 +70,8 @@ object FormPedidosVenda: TFormPedidosVenda
     TitleFont.Height = -11
     TitleFont.Name = 'Tahoma'
     TitleFont.Style = []
+    OnKeyDown = DBGridPedProdutosKeyDown
+    OnKeyPress = DBGridPedProdutosKeyPress
     Columns = <
       item
         Expanded = False
@@ -147,6 +151,7 @@ object FormPedidosVenda: TFormPedidosVenda
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
+      OnClick = btnGravarPedidoClick
     end
     object DBEdit1: TDBEdit
       Left = 624
@@ -202,6 +207,7 @@ object FormPedidosVenda: TFormPedidosVenda
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 4
+      OnClick = btnConfirmarItemClick
     end
     object EdtDataEmissao: TDateTimePicker
       Left = 115
@@ -221,6 +227,7 @@ object FormPedidosVenda: TFormPedidosVenda
       AutoSize = False
       NumbersOnly = True
       TabOrder = 0
+      OnChange = EdtCodigoClienteChange
       OnKeyPress = EdtCodigoClienteKeyPress
     end
     object EdtNumeroPedido: TEdit
@@ -335,6 +342,18 @@ object FormPedidosVenda: TFormPedidosVenda
         TabOrder = 4
       end
     end
+    object DBLookupComboBox2: TDBLookupComboBox
+      Left = 209
+      Top = 6
+      Width = 261
+      Height = 21
+      KeyField = 'codigo'
+      ListField = 'nome'
+      ListSource = dsClientes
+      TabOrder = 5
+      TabStop = False
+      OnCloseUp = DBLookupComboBox2CloseUp
+    end
   end
   object FDConnection1: TFDConnection
     Params.Strings = (
@@ -424,6 +443,8 @@ object FormPedidosVenda: TFormPedidosVenda
     Top = 69
   end
   object MTPedidosProdutos: TFDMemTable
+    AfterDelete = MTPedidosProdutosAfterDelete
+    OnCalcFields = MTPedidosProdutosCalcFields
     FieldDefs = <>
     IndexDefs = <>
     FetchOptions.AssignedValues = [evMode]

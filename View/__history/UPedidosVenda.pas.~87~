@@ -86,12 +86,16 @@ type
     procedure btnGravarPedidoClick(Sender: TObject);
     procedure MTPedidosProdutosCalcFields(DataSet: TDataSet);
     procedure DBGridPedProdutosKeyPress(Sender: TObject; var Key: Char);
+    procedure DBGridPedProdutosKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure btnLocalizarPedidoClick(Sender: TObject);
   private
     { Private declarations }
     procedure LimparCamposPedido();
     procedure LimparCamposProdutoPedido();
     function  CalcularValorTotal(): Real;
     procedure SalvarPedido();
+    function  CarregarDadosPedido(pnumero_pedido: Integer): boolean;
   public
     { Public declarations }
     bDbPronto: Boolean;
@@ -190,6 +194,48 @@ begin
   LimparCamposPedido();
 end;
 
+procedure TFormPedidosVenda.btnLocalizarPedidoClick(Sender: TObject);
+var
+  iNumeroPedido: Integer;
+begin
+  iNumeroPedido := strtointdef(inputbox('Número do pedido', 'Informe o número do pedido', ''), -1);
+  if not(CarregarDadosPedido(iNumeroPedido)) then
+  begin
+    application.messagebox('Pedido não encontrado !', 'Atenção', mb_ok+mb_iconinformation);
+    Exit;
+  end;
+end;
+
+function TFormPedidosVenda.CarregarDadosPedido(pnumero_pedido: Integer): boolean;
+begin
+  QueryAux.Close;
+  QueryAux.SQL.Clear;
+  QueryAux.SQL.Add('select * from dbwktech.pedidos');
+  QueryAux.SQL.Add(' where numero_pedido = ' + floattostr(pnumero_pedido));
+  QueryAux.Open;
+  if (QueryAux.IsEmpty) then
+  begin
+    Result := False;
+  end
+  else
+  begin
+    Result := True;
+    MTPedidos.EmptyDataSet;
+    MTPedidos.Insert;
+    MTPedidosnumero_pedido.Value  := QueryAux.fieldbyname('numero_pedido').Value;
+    MTPedidosdata_emissao.Value   := QueryAux.fieldbyname('data_emmissao').Value;
+    MTPedidoscodigo_cliente.Value := QueryAux.fieldbyname('codigo_cliente').Value;
+    MTPedidosvalor_total.Value    := QueryAux.fieldbyname('valor_total').Value;
+    MTPedidos.Post;
+
+    EdtCodigoCliente.Text   := MTPedidoscodigo_cliente.asstring;
+    edtNumeroPedido.Text    := MTPedidosnumero_pedido.AsString;
+    edtDataEmissao.DateTime := MTPedidosdata_emissao.AsDateTime;
+
+  end;
+  QueryAux.Close;
+end;
+
 procedure TFormPedidosVenda.SalvarPedido();
 var
   oPedidosDTO: TPedidosDTO;
@@ -268,6 +314,34 @@ begin
   EdtQuantidade.Text         := EmptyStr;
   EdtValorUnitario.Text      := EmptyStr;
   EdtValorTotal.Text         := EmptyStr;
+end;
+
+procedure TFormPedidosVenda.DBGridPedProdutosKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if (key = 46) then //Delete
+  begin
+    if (MTPedidosProdutosID.Isnull) then
+    begin
+      application.MessageBox('Grave o pedido primeiro !', 'Aviso', mb_ok+mb_iconinformation);
+      Exit;
+    end;
+
+    if application.MessageBox('Deseja excluir este item do pedido ?', 'Excluir', mb_yesno+mb_iconquestion) = mryes then
+    begin
+      FDConnection1.StartTransaction;
+      QueryAux.Close;
+      QueryAux.SQL.Clear;
+      QueryAux.SQL.Add('delete from pedidos_produtos');
+      QueryAux.SQL.Add(' where ID = ');
+      QueryAux.SQL.Add(MTPedidosProdutosID.AsString);
+      QueryAux.Active := True;
+      QueryAux.Close;
+
+      MTPedidosProdutos.Delete;
+      FDConnection1.Commit;
+    end;
+  end;
 end;
 
 procedure TFormPedidosVenda.DBGridPedProdutosKeyPress(Sender: TObject;
