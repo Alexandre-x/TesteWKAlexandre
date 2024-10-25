@@ -440,6 +440,7 @@ object FormPedidosVenda: TFormPedidosVenda
   end
   object MTPedidosProdutos: TFDMemTable
     AfterDelete = MTPedidosProdutosAfterDelete
+    OnCalcFields = MTPedidosProdutosCalcFields
     FieldDefs = <>
     IndexDefs = <>
     FetchOptions.AssignedValues = [evMode]

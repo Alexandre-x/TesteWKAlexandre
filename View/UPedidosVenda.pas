@@ -84,6 +84,7 @@ type
     procedure DBLookupComboBox2CloseUp(Sender: TObject);
     procedure EdtCodigoClienteChange(Sender: TObject);
     procedure btnGravarPedidoClick(Sender: TObject);
+    procedure MTPedidosProdutosCalcFields(DataSet: TDataSet);
   private
     { Private declarations }
     procedure LimparCamposPedido();
@@ -381,6 +382,25 @@ begin
   MTPedidos.Edit;
   MTPedidosvalor_total.AsFloat := CalcularValorTotal();
   MTPedidos.Post;
+end;
+
+procedure TFormPedidosVenda.MTPedidosProdutosCalcFields(DataSet: TDataSet);
+begin
+  QueryAux.Close;
+  QueryAux.SQL.Clear;
+  QueryAux.SQL.Add('select descricao from produtos');
+  QueryAux.SQL.Add(' where cod_produto = ' + MTPedidosProdutoscodigo_produto.AsString);
+  QueryAux.Open;
+  if (QueryAux.IsEmpty) or
+      (QueryAux.FieldByName('descricao').IsNull) then
+  begin
+    MTPedidosProdutosdescricao_produto.AsString := EmptyStr;
+  end
+  else
+  begin
+    MTPedidosProdutosdescricao_produto.AsString := QueryAux.FieldByName('descricao').AsString;
+  end;
+  QueryAux.Close;
 end;
 
 procedure TFormPedidosVenda.TimerCheckDBTimer(Sender: TObject);
