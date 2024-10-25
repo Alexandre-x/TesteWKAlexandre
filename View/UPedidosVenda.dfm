@@ -2,7 +2,7 @@ object FormPedidosVenda: TFormPedidosVenda
   Left = 0
   Top = 0
   Caption = 'Pedidos  de Venda'
-  ClientHeight = 392
+  ClientHeight = 386
   ClientWidth = 766
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,16 +19,16 @@ object FormPedidosVenda: TFormPedidosVenda
     Left = 0
     Top = 0
     Width = 766
-    Height = 201
+    Height = 41
     Align = alTop
     TabOrder = 0
-    ExplicitTop = -6
-    object btnConfirmar: TButton
+    ExplicitTop = 160
+    object btnLocalizarPed: TButton
       Left = 4
-      Top = 168
+      Top = 6
       Width = 105
       Height = 27
-      Caption = 'Confirmar'
+      Caption = 'Localizar Pedido'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clGreen
       Font.Height = -11
@@ -36,40 +36,30 @@ object FormPedidosVenda: TFormPedidosVenda
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
+      Visible = False
     end
-    object DBGrid1: TDBGrid
-      Left = 16
-      Top = 16
-      Width = 320
-      Height = 120
-      DataSource = dsClientes
+    object btnCancelarPed: TButton
+      Left = 115
+      Top = 6
+      Width = 105
+      Height = 27
+      Caption = 'Cancelar Pedido'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clGreen
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
       TabOrder = 1
-      TitleFont.Charset = DEFAULT_CHARSET
-      TitleFont.Color = clWindowText
-      TitleFont.Height = -11
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Style = []
-    end
-    object DBGrid2: TDBGrid
-      Left = 346
-      Top = 48
-      Width = 320
-      Height = 120
-      DataSource = dsProdutos
-      TabOrder = 2
-      TitleFont.Charset = DEFAULT_CHARSET
-      TitleFont.Color = clWindowText
-      TitleFont.Height = -11
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Style = []
+      Visible = False
     end
   end
   object DBGridPedProdutos: TDBGrid
     Left = 0
     Top = 201
     Width = 766
-    Height = 150
-    Align = alClient
+    Height = 144
+    Align = alBottom
     DataSource = dsPedidosProdutos
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
     TabOrder = 1
@@ -122,7 +112,7 @@ object FormPedidosVenda: TFormPedidosVenda
   end
   object Panel2: TPanel
     Left = 0
-    Top = 351
+    Top = 345
     Width = 766
     Height = 41
     Align = alBottom
@@ -147,7 +137,7 @@ object FormPedidosVenda: TFormPedidosVenda
     object btnGravarPedido: TButton
       Left = 4
       Top = 6
-      Width = 105
+      Width = 125
       Height = 27
       Caption = 'Gravar Pedido'
       Font.Charset = DEFAULT_CHARSET
@@ -168,6 +158,28 @@ object FormPedidosVenda: TFormPedidosVenda
       DataSource = dsPedidos
       ReadOnly = True
       TabOrder = 1
+    end
+  end
+  object Panel3: TPanel
+    Left = 0
+    Top = 41
+    Width = 766
+    Height = 160
+    Align = alTop
+    TabOrder = 3
+    object btnConfirmarItem: TButton
+      Left = 4
+      Top = 127
+      Width = 125
+      Height = 27
+      Caption = 'Confirmar Produto'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clGreen
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
     end
   end
   object FDConnection1: TFDConnection

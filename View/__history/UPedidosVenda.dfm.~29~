@@ -2,7 +2,7 @@ object FormPedidosVenda: TFormPedidosVenda
   Left = 0
   Top = 0
   Caption = 'Pedidos  de Venda'
-  ClientHeight = 392
+  ClientHeight = 386
   ClientWidth = 766
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -11,19 +11,20 @@ object FormPedidosVenda: TFormPedidosVenda
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 0
+    Top = 160
     Width = 766
-    Height = 201
-    Align = alTop
+    Height = 41
+    Align = alBottom
     TabOrder = 0
-    ExplicitTop = -6
     object btnConfirmar: TButton
       Left = 4
-      Top = 168
+      Top = 6
       Width = 105
       Height = 27
       Caption = 'Confirmar'
@@ -40,8 +41,8 @@ object FormPedidosVenda: TFormPedidosVenda
     Left = 0
     Top = 201
     Width = 766
-    Height = 150
-    Align = alClient
+    Height = 144
+    Align = alBottom
     DataSource = dsPedidosProdutos
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
     TabOrder = 1
@@ -94,7 +95,7 @@ object FormPedidosVenda: TFormPedidosVenda
   end
   object Panel2: TPanel
     Left = 0
-    Top = 351
+    Top = 345
     Width = 766
     Height = 41
     Align = alBottom
@@ -117,7 +118,7 @@ object FormPedidosVenda: TFormPedidosVenda
       ParentFont = False
     end
     object btnGravarPedido: TButton
-      Left = 350
+      Left = 4
       Top = 6
       Width = 105
       Height = 27
@@ -310,5 +311,11 @@ object FormPedidosVenda: TFormPedidosVenda
     DataSet = MTPedidosProdutos
     Left = 678
     Top = 146
+  end
+  object TimerCheckDB: TTimer
+    Enabled = False
+    OnTimer = TimerCheckDBTimer
+    Left = 696
+    Top = 24
   end
 end

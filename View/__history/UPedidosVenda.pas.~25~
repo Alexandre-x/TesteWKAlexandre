@@ -49,8 +49,6 @@ type
     Label1: TLabel;
     DBEdit1: TDBEdit;
     TimerCheckDB: TTimer;
-    DBGrid1: TDBGrid;
-    DBGrid2: TDBGrid;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure TimerCheckDBTimer(Sender: TObject);
@@ -79,7 +77,7 @@ begin
   sArqINI := IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName)) + 'TesteWKAlexandre.ini';
   if not(FileExists(sArqIni)) then
   begin
-    Application.MessageBox('Arquivo INI para acessar banco de dados, n√£o foi encontrado.', 'Aten√ß√£o', mb_ok+mb_iconwarning);
+    Application.MessageBox('Arquivo INI para acessar banco de dados, n„o foi encontrado.', 'AtenÁ„o', mb_ok+mb_iconwarning);
     bDbPronto := False;
   end
   else
@@ -90,7 +88,7 @@ begin
     except
       on E: Exception do
       begin
-        Application.MessageBox(pchar(format('Falha ao acessar banco de dados !%s%s', [#13, E.Message])), 'Aten√ß√£o', mb_ok+mb_iconwarning);
+        Application.MessageBox(pchar(format('Falha ao acessar banco de dados !%s%s', [#13, E.Message])), 'AtenÁ„o', mb_ok+mb_iconwarning);
         bDbPronto := False;
       end;
     end;
@@ -101,7 +99,7 @@ procedure TFormPedidosVenda.FormShow(Sender: TObject);
 begin
   if not(FDConnection1.Connected) or not(bDbPronto) then
   begin
-    Application.MessageBox('N√£o foi poss√≠vel conectar-se ao banco de dados !', 'Aten√ß√£o', mb_ok+mb_iconwarning);
+    Application.MessageBox('N„o foi possÌvel conectar-se ao banco de dados !', 'AtenÁ„o', mb_ok+mb_iconwarning);
     bDbPronto := False;
   end;
 

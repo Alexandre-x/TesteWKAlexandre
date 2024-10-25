@@ -2,7 +2,7 @@ object FormPedidosVenda: TFormPedidosVenda
   Left = 0
   Top = 0
   Caption = 'Pedidos  de Venda'
-  ClientHeight = 352
+  ClientHeight = 386
   ClientWidth = 766
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -11,31 +11,53 @@ object FormPedidosVenda: TFormPedidosVenda
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
     Top = 0
     Width = 766
-    Height = 201
+    Height = 41
     Align = alTop
     TabOrder = 0
-    ExplicitTop = -6
-    object btnConfirmar: TButton
+    ExplicitTop = 160
+    object btnLocalizarPed: TButton
       Left = 4
-      Top = 168
+      Top = 6
       Width = 105
       Height = 27
-      Caption = 'Confirmar'
+      Caption = 'Localizar Pedido'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clGreen
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
       TabOrder = 0
+    end
+    object btnCancelarPed: TButton
+      Left = 115
+      Top = 6
+      Width = 105
+      Height = 27
+      Caption = 'Cancelar Pedido'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clGreen
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
     end
   end
   object DBGridPedProdutos: TDBGrid
     Left = 0
     Top = 201
     Width = 766
-    Height = 151
-    Align = alClient
+    Height = 144
+    Align = alBottom
     DataSource = dsPedidosProdutos
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
     TabOrder = 1
@@ -86,14 +108,83 @@ object FormPedidosVenda: TFormPedidosVenda
         Visible = True
       end>
   end
+  object Panel2: TPanel
+    Left = 0
+    Top = 345
+    Width = 766
+    Height = 41
+    Align = alBottom
+    TabOrder = 2
+    ExplicitLeft = 224
+    ExplicitTop = 360
+    ExplicitWidth = 185
+    object Label1: TLabel
+      Left = 496
+      Top = 12
+      Width = 122
+      Height = 13
+      Caption = 'Valor Total do Pedido:'
+      FocusControl = DBEdit1
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object btnGravarPedido: TButton
+      Left = 4
+      Top = 6
+      Width = 105
+      Height = 27
+      Caption = 'Gravar Pedido'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clGreen
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+    end
+    object DBEdit1: TDBEdit
+      Left = 624
+      Top = 9
+      Width = 134
+      Height = 21
+      TabStop = False
+      DataField = 'valor_total'
+      DataSource = dsPedidos
+      ReadOnly = True
+      TabOrder = 1
+    end
+  end
+  object Panel3: TPanel
+    Left = 0
+    Top = 41
+    Width = 766
+    Height = 160
+    Align = alTop
+    TabOrder = 3
+    object btnConfirmarItem: TButton
+      Left = 4
+      Top = 127
+      Width = 125
+      Height = 27
+      Caption = 'Confirmar Produto'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clGreen
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+    end
+  end
   object FDConnection1: TFDConnection
     Params.Strings = (
-      'Database=dbwktech'
-      'User_Name=root'
-      'Password=Wk#102423#1a'
-      'Server=localhost'
+      'Server='
       'DriverID=MySQL')
-    Connected = True
+    LoginPrompt = False
     Left = 608
     Top = 40
   end
@@ -215,7 +306,6 @@ object FormPedidosVenda: TFormPedidosVenda
     end
   end
   object QProdutos: TFDQuery
-    Active = True
     Connection = FDConnection1
     SQL.Strings = (
       'select * from produtos'
@@ -258,5 +348,11 @@ object FormPedidosVenda: TFormPedidosVenda
     DataSet = MTPedidosProdutos
     Left = 678
     Top = 146
+  end
+  object TimerCheckDB: TTimer
+    Enabled = False
+    OnTimer = TimerCheckDBTimer
+    Left = 696
+    Top = 24
   end
 end
