@@ -164,7 +164,7 @@ begin
       end;
     end;
 
-    //Inserir ou Atualizar Itens do Pedido
+    //Atualizar Itens do Pedido
     if (length(pPedidosDTO.PedidosProdutos) > 0) then
     begin
       for iContProd := 0 to length(pPedidosDTO.PedidosProdutos) - 1 do
@@ -185,7 +185,6 @@ begin
         begin
           bExisteItemPedido := False;
         end;
-        QAux.Close;
 
         if not(bExisteItemPedido) then
         begin
@@ -236,7 +235,7 @@ begin
     on E: Exception do
     begin
       FConexao.Rollback;
-      showmessage(format('Falha ao inserir itens do pedido !%s%s', [#13, E.Message]));
+      showmessage(format('Falha ao salvar itens do pedido !%s%s', [#13, E.Message]));
       Exit;
     end;
   end;
@@ -275,7 +274,7 @@ begin
     on E: Exception do
     begin
       FConexao.Rollback;
-      showmessage(format('Falha ao atualizar itens do pedido !%s%s', [#13, E.Message]));
+      showmessage(format('Falha ao salvar itens do pedido !%s%s', [#13, E.Message]));
       Exit;
     end;
   end;

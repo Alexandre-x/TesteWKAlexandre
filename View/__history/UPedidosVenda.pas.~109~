@@ -71,6 +71,13 @@ type
     Label9: TLabel;
     EdtValorTotal: TEdit;
     DBLookupComboBox2: TDBLookupComboBox;
+    QPedidosProdutos: TFDQuery;
+    QPedidosProdutosID: TFDAutoIncField;
+    QPedidosProdutosnumero_pedido: TIntegerField;
+    QPedidosProdutoscodigo_produto: TIntegerField;
+    QPedidosProdutosquantidade: TBCDField;
+    QPedidosProdutosvalor_unitario: TBCDField;
+    QPedidosProdutosvalor_total: TBCDField;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure TimerCheckDBTimer(Sender: TObject);
@@ -89,13 +96,14 @@ type
     procedure DBGridPedProdutosKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure btnLocalizarPedidoClick(Sender: TObject);
+    procedure btnCancelarPedidoClick(Sender: TObject);
   private
     { Private declarations }
     procedure LimparCamposPedido();
     procedure LimparCamposProdutoPedido();
     function  CalcularValorTotal(): Real;
     procedure SalvarPedido();
-    procedure CarregarDadosPedido(pnumero_pedido: Integer);
+    function  CarregarDadosPedido(pnumero_pedido: Integer): boolean;
   public
     { Public declarations }
     bDbPronto: Boolean;
@@ -109,6 +117,53 @@ implementation
 {$R *.dfm}
 
 Uses UControllerPedidosVenda, UModelPedidosVenda;
+
+procedure TFormPedidosVenda.btnCancelarPedidoClick(Sender: TObject);
+begin
+  if application.MessageBox('Confirma exclusão do pedido ?', 'Excluir', mb_yesno+mb_iconquestion) = mryes then
+  begin
+    try
+      FDConnection1.StartTransaction;
+      QueryAux.Close;
+      QueryAux.SQL.Clear;
+      QueryAux.SQL.Add('delete from pedidos_produtos');
+      QueryAux.SQL.Add(' where numero_pedido = ');
+      QueryAux.SQL.Add(MTPedidosProdutosnumero_pedido.AsString);
+      QueryAux.ExecSQL;
+      QueryAux.Close;
+      FDConnection1.Commit;
+    except
+      on E: Exception do
+      begin
+        FConexao.Rollback;
+        showmessage(format('Falha ao excluir itens do pedido !%s%s', [#13, E.Message]));
+        Exit;
+      end;
+    end;
+
+    try
+      FDConnection1.StartTransaction;
+      QueryAux.Close;
+      QueryAux.SQL.Clear;
+      QueryAux.SQL.Add('delete from pedidos');
+      QueryAux.SQL.Add(' where numero_pedido = ');
+      QueryAux.SQL.Add(MTPedidosProdutosnumero_pedido.AsString);
+      QueryAux.ExecSQL;
+      QueryAux.Close;
+      FDConnection1.Commit;
+    except
+      on E: Exception do
+      begin
+        FConexao.Rollback;
+        showmessage(format('Falha ao excluir pedido !%s%s', [#13, E.Message]));
+        Exit;
+      end;
+    end;
+
+    MTPedidosProdutos.EmptyDataSet;
+    MTPedidos.EmptyDataSet;
+  end;
+end;
 
 procedure TFormPedidosVenda.btnConfirmarItemClick(Sender: TObject);
 var
@@ -198,13 +253,85 @@ procedure TFormPedidosVenda.btnLocalizarPedidoClick(Sender: TObject);
 var
   iNumeroPedido: Integer;
 begin
-  iNumeroPedido := strtointdef(inputbox('Número do pedido', 'Informe o número do pedido', ''), -1);
-  CarregarDadosPedido(iNumeroPedido);
+  iNumeroPedido := strtointdef(inputbox('Informe o número do pedido', 'Número do pedido', ''), -1);
+  if not(CarregarDadosPedido(iNumeroPedido)) then
+  begin
+    application.messagebox('Pedido não encontrado !', 'Atenção', mb_ok+mb_iconinformation);
+    Exit;
+  end;
 end;
 
-procedure TFormPedidosVenda.CarregarDadosPedido(pnumero_pedido: Integer);
+function TFormPedidosVenda.CarregarDadosPedido(pnumero_pedido: Integer): boolean;
 begin
+  //Carregando dados do pedido
+  QueryAux.Close;
+  QueryAux.SQL.Clear;
+  QueryAux.SQL.Add('select * from dbwktech.pedidos');
+  QueryAux.SQL.Add(' where numero_pedido = ' + floattostr(pnumero_pedido));
+  QueryAux.Open;
+  if (QueryAux.IsEmpty) then
+  begin
+    Result := False;
+    Exit;
+  end
+  else
+  begin
+    Result := True;
+    MTPedidos.EmptyDataSet;
+    MTPedidos.Insert;
+    MTPedidosnumero_pedido.Value  := QueryAux.fieldbyname('numero_pedido').Value;
+    MTPedidosdata_emissao.Value   := QueryAux.fieldbyname('data_emissao').Value;
+    MTPedidoscodigo_cliente.Value := QueryAux.fieldbyname('codigo_cliente').Value;
+    MTPedidosvalor_total.Value    := QueryAux.fieldbyname('valor_total').Value;
+    MTPedidos.Post;
 
+    EdtCodigoCliente.Text      := MTPedidoscodigo_cliente.asstring;
+    edtNumeroPedido.Text       := MTPedidosnumero_pedido.AsString;
+    edtDataEmissao.DateTime    := MTPedidosdata_emissao.AsDateTime;
+    dblookupcombobox2.KeyValue := MTPedidoscodigo_cliente.AsInteger;
+  end;
+
+  //Carregando dados dos Itens do Pedido
+  QueryAux.Close;
+//  QueryAux.SQL.Clear;
+//  QueryAux.SQL.Add('select ');
+//  QueryAux.SQL.Add(' pp.ID, ');
+//  QueryAux.SQL.Add(' pp.numero_pedido, ');
+//  QueryAux.SQL.Add(' pp.codigo_produto, ');
+//  QueryAux.SQL.Add(' cast(pp.quantidade as float) as QUANT, ');
+//  QueryAux.SQL.Add(' pp.valor_unitario, ');
+//  QueryAux.SQL.Add(' pp.valor_total');
+//  QueryAux.SQL.Add(' from pedidos_produtos pp');
+//  QueryAux.SQL.Add(' where pp.numero_pedido = ' + floattostr(pnumero_pedido));
+//  QueryAux.Open;
+  QPedidosProdutos.Close;
+  QPedidosProdutos.ParamByName('numero_pedido').AsFloat := pnumero_pedido;
+  QPedidosProdutos.Active := True;
+  if (QPedidosProdutos.IsEmpty) then
+  begin
+    //Result := False;
+  end
+  else
+  begin
+    Result := True;
+    MTPedidosProdutos.EmptyDataSet;
+    QPedidosProdutos.First;
+    while not(QPedidosProdutos.Eof) do
+    begin
+      MTPedidosProdutos.Insert;
+      MTPedidosProdutosID.value             := QPedidosProdutosID.Value;
+      MTPedidosProdutosnumero_pedido.Value  := QPedidosProdutosnumero_pedido.Value;
+      MTPedidosProdutoscodigo_produto.Value := QPedidosProdutoscodigo_produto.Value;
+      MTPedidosProdutosquantidade.Value     := QPedidosProdutosquantidade.Value;
+      MTPedidosProdutosvalor_unitario.Value := QPedidosProdutosvalor_unitario.Value;
+      MTPedidosProdutosvalor_total.Value    := QPedidosProdutosvalor_total.Value;
+      MTPedidosProdutos.Post;
+
+      QPedidosProdutos.Next;
+    end;
+  end;
+
+  QPedidosProdutos.Close;
 end;
 
 procedure TFormPedidosVenda.SalvarPedido();
@@ -217,6 +344,21 @@ begin
   try
     oPedidosDTO         := TPedidosDTO.Create;
     oPedidosProdutosDTO := TPedidosProdutosDTO.Create;
+
+    if (mtPedidos.IsEmpty) then
+    begin
+      mtPedidos.Insert;
+    end
+    else
+    begin
+      mtPedidos.Edit;
+    end;
+
+    MTPedidosnumero_pedido.AsInteger  := strtointdef(EdtNumeroPedido.Text, 0);
+    MTPedidosdata_emissao.AsDateTime  := edtDataEmissao.DateTime;
+    MTPedidoscodigo_cliente.AsString  := edtCodigoCliente.Text;
+    MTPedidosvalor_total.AsFloat      := CalcularValorTotal();
+    MTPedidos.Post;
 
     oPedidosDTO.numero_pedido  := MTPedidosnumero_pedido.Value;
     oPedidosDTO.data_emmissao  := MTPedidosdata_emissao.Value;
@@ -300,14 +442,23 @@ begin
 
     if application.MessageBox('Deseja excluir este item do pedido ?', 'Excluir', mb_yesno+mb_iconquestion) = mryes then
     begin
-      FDConnection1.StartTransaction;
-      QueryAux.Close;
-      QueryAux.SQL.Clear;
-      QueryAux.SQL.Add('delete from pedidos_produtos');
-      QueryAux.SQL.Add(' where ID = ');
-      QueryAux.SQL.Add(MTPedidosProdutosID.AsString);
-      QueryAux.Active := True;
-      QueryAux.Close;
+      try
+        FDConnection1.StartTransaction;
+        QueryAux.Close;
+        QueryAux.SQL.Clear;
+        QueryAux.SQL.Add('delete from pedidos_produtos');
+        QueryAux.SQL.Add(' where ID = ');
+        QueryAux.SQL.Add(MTPedidosProdutosID.AsString);
+        QueryAux.ExecSQL;
+        QueryAux.Close;
+      except
+        on E: Exception do
+        begin
+          FConexao.Rollback;
+          showmessage(format('Falha ao excluir item pedido !%s%s', [#13, E.Message]));
+          Exit;
+        end;
+      end;
 
       MTPedidosProdutos.Delete;
       FDConnection1.Commit;
@@ -327,6 +478,10 @@ begin
     EdtValorUnitario.Text      := MTPedidosProdutosvalor_unitario.AsString;
     EdtValorTotal.Text         := MTPedidosProdutosvalor_total.AsString;
     MTPedidosProdutos.Edit;
+    if (EdtQuantidade.CanFocus) then
+    begin
+      EdtQuantidade.SetFocus;
+    end;
   end;
 end;
 

@@ -164,7 +164,7 @@ begin
       end;
     end;
 
-    //Inserir ou Atualizar Itens do Pedido
+    //Atualizar Itens do Pedido
     if (length(pPedidosDTO.PedidosProdutos) > 0) then
     begin
       for iContProd := 0 to length(pPedidosDTO.PedidosProdutos) - 1 do

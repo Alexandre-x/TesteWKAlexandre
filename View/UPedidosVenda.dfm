@@ -52,6 +52,7 @@ object FormPedidosVenda: TFormPedidosVenda
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
+      OnClick = btnCancelarPedidoClick
     end
   end
   object DBGridPedProdutos: TDBGrid
@@ -139,7 +140,7 @@ object FormPedidosVenda: TFormPedidosVenda
     object btnGravarPedido: TButton
       Left = 4
       Top = 6
-      Width = 125
+      Width = 133
       Height = 27
       Caption = 'Gravar Pedido'
       Font.Charset = DEFAULT_CHARSET
@@ -161,6 +162,21 @@ object FormPedidosVenda: TFormPedidosVenda
       DataSource = dsPedidos
       ReadOnly = True
       TabOrder = 1
+    end
+    object btnDescartarAlteracoes: TButton
+      Left = 143
+      Top = 6
+      Width = 133
+      Height = 27
+      Caption = 'Descartar Altera'#231#245'es'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clGreen
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 2
+      OnClick = btnDescartarAlteracoesClick
     end
   end
   object Panel3: TPanel
@@ -355,7 +371,10 @@ object FormPedidosVenda: TFormPedidosVenda
   end
   object FDConnection1: TFDConnection
     Params.Strings = (
-      'Server='
+      'Server=localhost'
+      'Database=dbwktechZZZ'
+      'User_Name=root'
+      'Password=Wk#102423#1a'
       'DriverID=MySQL')
     LoginPrompt = False
     Left = 608
@@ -534,5 +553,54 @@ object FormPedidosVenda: TFormPedidosVenda
     Connection = FDConnection1
     Left = 392
     Top = 73
+  end
+  object QPedidosProdutos: TFDQuery
+    Connection = FDConnection1
+    SQL.Strings = (
+      'select pp.* from pedidos_produtos pp'
+      'where pp.numero_pedido = :numero_pedido')
+    Left = 424
+    Top = 225
+    ParamData = <
+      item
+        Name = 'NUMERO_PEDIDO'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
+    object QPedidosProdutosID: TFDAutoIncField
+      FieldName = 'ID'
+      Origin = 'ID'
+      ProviderFlags = [pfInWhere, pfInKey]
+    end
+    object QPedidosProdutosnumero_pedido: TIntegerField
+      FieldName = 'numero_pedido'
+      Origin = 'numero_pedido'
+      Required = True
+    end
+    object QPedidosProdutoscodigo_produto: TIntegerField
+      FieldName = 'codigo_produto'
+      Origin = 'codigo_produto'
+      Required = True
+    end
+    object QPedidosProdutosquantidade: TBCDField
+      FieldName = 'quantidade'
+      Origin = 'quantidade'
+      Required = True
+      Precision = 11
+    end
+    object QPedidosProdutosvalor_unitario: TBCDField
+      FieldName = 'valor_unitario'
+      Origin = 'valor_unitario'
+      Required = True
+      Precision = 11
+      Size = 2
+    end
+    object QPedidosProdutosvalor_total: TBCDField
+      AutoGenerateValue = arDefault
+      FieldName = 'valor_total'
+      Origin = 'valor_total'
+      Precision = 11
+      Size = 2
+    end
   end
 end
