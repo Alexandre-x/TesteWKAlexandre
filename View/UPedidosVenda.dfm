@@ -23,7 +23,6 @@ object FormPedidosVenda: TFormPedidosVenda
     Height = 41
     Align = alTop
     TabOrder = 0
-    ExplicitTop = 160
     object btnLocalizarPedido: TButton
       Left = 4
       Top = 6
@@ -120,9 +119,6 @@ object FormPedidosVenda: TFormPedidosVenda
     Height = 41
     Align = alBottom
     TabOrder = 2
-    ExplicitLeft = 224
-    ExplicitTop = 360
-    ExplicitWidth = 185
     object Label1: TLabel
       Left = 496
       Top = 12
@@ -186,7 +182,6 @@ object FormPedidosVenda: TFormPedidosVenda
     Height = 160
     Align = alTop
     TabOrder = 3
-    ExplicitTop = 47
     object Label2: TLabel
       Left = 8
       Top = 9
@@ -390,6 +385,7 @@ object FormPedidosVenda: TFormPedidosVenda
       FieldName = 'codigo'
       Origin = 'codigo'
       ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
     end
     object QClientesnome: TStringField
       AutoGenerateValue = arDefault
@@ -510,6 +506,7 @@ object FormPedidosVenda: TFormPedidosVenda
       FieldName = 'codigo'
       Origin = 'codigo'
       ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
     end
     object QProdutosdescricao: TStringField
       AutoGenerateValue = arDefault
@@ -571,6 +568,7 @@ object FormPedidosVenda: TFormPedidosVenda
       FieldName = 'ID'
       Origin = 'ID'
       ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
     end
     object QPedidosProdutosnumero_pedido: TIntegerField
       FieldName = 'numero_pedido'
@@ -602,5 +600,9 @@ object FormPedidosVenda: TFormPedidosVenda
       Precision = 11
       Size = 2
     end
+  end
+  object FDPhysMySQLDriverLink1: TFDPhysMySQLDriverLink
+    Left = 680
+    Top = 80
   end
 end

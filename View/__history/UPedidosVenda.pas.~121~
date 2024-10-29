@@ -78,6 +78,8 @@ type
     QPedidosProdutosquantidade: TBCDField;
     QPedidosProdutosvalor_unitario: TBCDField;
     QPedidosProdutosvalor_total: TBCDField;
+    btnDescartarAlteracoes: TButton;
+    FDPhysMySQLDriverLink1: TFDPhysMySQLDriverLink;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure TimerCheckDBTimer(Sender: TObject);
@@ -97,6 +99,7 @@ type
       Shift: TShiftState);
     procedure btnLocalizarPedidoClick(Sender: TObject);
     procedure btnCancelarPedidoClick(Sender: TObject);
+    procedure btnDescartarAlteracoesClick(Sender: TObject);
   private
     { Private declarations }
     procedure LimparCamposPedido();
@@ -120,6 +123,17 @@ Uses UControllerPedidosVenda, UModelPedidosVenda;
 
 procedure TFormPedidosVenda.btnCancelarPedidoClick(Sender: TObject);
 begin
+  if MTPedidos.IsEmpty then
+  begin
+    btnLocalizarPedido.Click;
+  end;
+
+  if MTPedidos.IsEmpty then
+  begin
+    Application.MessageBox('Nenhum pedido informado para cancelamento!', 'Aviso', mb_ok+mb_iconinformation);
+    Exit;
+  end;
+
   if application.MessageBox('Confirma exclusão do pedido ?', 'Excluir', mb_yesno+mb_iconquestion) = mryes then
   begin
     try
@@ -160,6 +174,10 @@ begin
       end;
     end;
 
+    EdtCodigoCliente.Text      := EmptyStr;
+    edtNumeroPedido.Text       := EmptyStr;
+    edtDataEmissao.DateTime    := Date;
+    dblookupcombobox2.KeyValue := -1;
     MTPedidosProdutos.EmptyDataSet;
     MTPedidos.EmptyDataSet;
   end;
@@ -261,6 +279,19 @@ begin
   end;
 end;
 
+procedure TFormPedidosVenda.btnDescartarAlteracoesClick(Sender: TObject);
+begin
+//  if application.MessageBox('Descartar alterações do pedido ?', 'Confirma', mb_yesno) <> mryes then
+//  begin
+//    exit;
+//  end;
+
+  MTPedidos.EmptyDataSet;
+  MTPedidosProdutos.EmptyDataSet;
+
+  LimparCamposPedido();
+end;
+
 function TFormPedidosVenda.CarregarDadosPedido(pnumero_pedido: Integer): boolean;
 begin
   //Carregando dados do pedido
@@ -293,17 +324,6 @@ begin
 
   //Carregando dados dos Itens do Pedido
   QueryAux.Close;
-//  QueryAux.SQL.Clear;
-//  QueryAux.SQL.Add('select ');
-//  QueryAux.SQL.Add(' pp.ID, ');
-//  QueryAux.SQL.Add(' pp.numero_pedido, ');
-//  QueryAux.SQL.Add(' pp.codigo_produto, ');
-//  QueryAux.SQL.Add(' cast(pp.quantidade as float) as QUANT, ');
-//  QueryAux.SQL.Add(' pp.valor_unitario, ');
-//  QueryAux.SQL.Add(' pp.valor_total');
-//  QueryAux.SQL.Add(' from pedidos_produtos pp');
-//  QueryAux.SQL.Add(' where pp.numero_pedido = ' + floattostr(pnumero_pedido));
-//  QueryAux.Open;
   QPedidosProdutos.Close;
   QPedidosProdutos.ParamByName('numero_pedido').AsFloat := pnumero_pedido;
   QPedidosProdutos.Active := True;
@@ -550,6 +570,7 @@ end;
 procedure TFormPedidosVenda.FormCreate(Sender: TObject);
 var
   sArqIni: String;
+  sPathDLL: String;
 begin
   bDbPronto := True;
   sArqINI := IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName)) + 'TesteWKAlexandre.ini';
@@ -561,6 +582,20 @@ begin
   else
   begin
     FDConnection1.Params.LoadFromFile(sArqINI);
+    sPathDLL := FDConnection1.Params.Values['DLL'];  //29.10.2024
+    showmessage(FDConnection1.Params.Text);
+    if (sPathDLL = EmptyStr) then
+    begin
+      sPathDLL := FDConnection1.Params.Values['VendorLib'];
+    end;
+
+    if (sPathDLL = EmptyStr) then
+    begin
+      sPathDLL := IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName)) + 'libmysql.dll';
+    end;
+
+    FDPhysMySQLDriverLink1.VendorLib := sPathDLL;
+
     try
       FDConnection1.Connected := True;
     except

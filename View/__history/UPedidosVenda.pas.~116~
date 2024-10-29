@@ -78,6 +78,7 @@ type
     QPedidosProdutosquantidade: TBCDField;
     QPedidosProdutosvalor_unitario: TBCDField;
     QPedidosProdutosvalor_total: TBCDField;
+    btnDescartarAlteracoes: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure TimerCheckDBTimer(Sender: TObject);
@@ -97,6 +98,7 @@ type
       Shift: TShiftState);
     procedure btnLocalizarPedidoClick(Sender: TObject);
     procedure btnCancelarPedidoClick(Sender: TObject);
+    procedure btnDescartarAlteracoesClick(Sender: TObject);
   private
     { Private declarations }
     procedure LimparCamposPedido();
@@ -171,6 +173,10 @@ begin
       end;
     end;
 
+    EdtCodigoCliente.Text      := EmptyStr;
+    edtNumeroPedido.Text       := EmptyStr;
+    edtDataEmissao.DateTime    := Date;
+    dblookupcombobox2.KeyValue := -1;
     MTPedidosProdutos.EmptyDataSet;
     MTPedidos.EmptyDataSet;
   end;
@@ -272,6 +278,19 @@ begin
   end;
 end;
 
+procedure TFormPedidosVenda.btnDescartarAlteracoesClick(Sender: TObject);
+begin
+//  if application.MessageBox('Descartar alterações do pedido ?', 'Confirma', mb_yesno) <> mryes then
+//  begin
+//    exit;
+//  end;
+
+  MTPedidos.EmptyDataSet;
+  MTPedidosProdutos.EmptyDataSet;
+
+  LimparCamposPedido();
+end;
+
 function TFormPedidosVenda.CarregarDadosPedido(pnumero_pedido: Integer): boolean;
 begin
   //Carregando dados do pedido
@@ -304,17 +323,6 @@ begin
 
   //Carregando dados dos Itens do Pedido
   QueryAux.Close;
-//  QueryAux.SQL.Clear;
-//  QueryAux.SQL.Add('select ');
-//  QueryAux.SQL.Add(' pp.ID, ');
-//  QueryAux.SQL.Add(' pp.numero_pedido, ');
-//  QueryAux.SQL.Add(' pp.codigo_produto, ');
-//  QueryAux.SQL.Add(' cast(pp.quantidade as float) as QUANT, ');
-//  QueryAux.SQL.Add(' pp.valor_unitario, ');
-//  QueryAux.SQL.Add(' pp.valor_total');
-//  QueryAux.SQL.Add(' from pedidos_produtos pp');
-//  QueryAux.SQL.Add(' where pp.numero_pedido = ' + floattostr(pnumero_pedido));
-//  QueryAux.Open;
   QPedidosProdutos.Close;
   QPedidosProdutos.ParamByName('numero_pedido').AsFloat := pnumero_pedido;
   QPedidosProdutos.Active := True;
