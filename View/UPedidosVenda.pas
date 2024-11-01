@@ -79,7 +79,6 @@ type
     QPedidosProdutosvalor_unitario: TBCDField;
     QPedidosProdutosvalor_total: TBCDField;
     btnDescartarAlteracoes: TButton;
-    FDPhysMySQLDriverLink1: TFDPhysMySQLDriverLink;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure TimerCheckDBTimer(Sender: TObject);
@@ -570,7 +569,6 @@ end;
 procedure TFormPedidosVenda.FormCreate(Sender: TObject);
 var
   sArqIni: String;
-  sPathDLL: String;
 begin
   bDbPronto := True;
   sArqINI := IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName)) + 'TesteWKAlexandre.ini';
@@ -582,14 +580,6 @@ begin
   else
   begin
     FDConnection1.Params.LoadFromFile(sArqINI);
-    sPathDLL := FDConnection1.Params.ValueFromIndex[6];      //29.10.2024
-    if (sPathDLL = EmptyStr) then
-    begin
-      sPathDLL := IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName)) + 'libmysql.dll';
-    end;
-
-    FDPhysMySQLDriverLink1.VendorLib := sPathDLL;
-
     try
       FDConnection1.Connected := True;
     except

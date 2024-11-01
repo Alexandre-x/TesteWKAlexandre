@@ -601,8 +601,4 @@ object FormPedidosVenda: TFormPedidosVenda
       Size = 2
     end
   end
-  object FDPhysMySQLDriverLink1: TFDPhysMySQLDriverLink
-    Left = 680
-    Top = 80
-  end
 end
